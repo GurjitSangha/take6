@@ -33,6 +33,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.0",
     "firebase": "^9.6.10"
   }
 }

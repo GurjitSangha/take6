@@ -1,7 +1,9 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 import config from './firebase_config';
 initializeApp(config);
 
-export const firestore = getFirestore();
+const firestore = getFirestore();
+connectFirestoreEmulator(firestore, 'localhost', 8080);
+export { firestore };
