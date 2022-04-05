@@ -8,10 +8,13 @@
 
 	let unsub;
 	let docRef;
+	let playerId;
 
 	$: gameId = $page.params.id;
 	onMount(() => {
 		docRef = doc(db, `games/${gameId}`);
+		playerId = localStorage.getItem('playerId');
+		console.log({ playerId });
 
 		unsub = onSnapshot(docRef, (snap) => {
 			// console.log(snap);
@@ -39,9 +42,10 @@
 			Welcome to game {gameId}
 		</h2>
 
-		{#if $gameState.host}
+		{#if $gameState.host && playerId}
 			<div>
 				<h3>Host: {getPlayerName($gameState.players, $gameState.host)}</h3>
+				<h3>You are: {$gameState.players[playerId].name}</h3>
 			</div>
 		{/if}
 
@@ -57,9 +61,12 @@
 		<button
 			on:click|preventDefault={handleClick}
 			class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-			type="submit">I'm Ready</button
+			type="submit"
 		>
+			{$gameState.players?.[playerId]?.ready ? "I'm Not Ready" : "I'm Ready"}
+		</button>
 		<br />
+		<p>Join Link: http://localhost:3000/join/{gameId}</p>
 		<a href="/" class="pt-4 underline">Back</a>
 	</div>
 </div>
