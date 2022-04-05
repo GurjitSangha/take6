@@ -10,6 +10,7 @@
 	@media (prefers-color-scheme: dark) {
 		:global(body) {
 			background-color: #1e293b;
+			color: white;
 		}
 	}
 </style>

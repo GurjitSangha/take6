@@ -1,5 +1,5 @@
 import type { RequestHandlerOutput } from '@sveltejs/kit';
-import { firestore as db } from '../firebase';
+import { firestore as db } from '$lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { randId } from '$lib/utils';
 
