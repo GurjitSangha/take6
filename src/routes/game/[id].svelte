@@ -2,22 +2,34 @@
 	import { page } from '$app/stores';
 	import { firestore as db } from '$lib/firebase';
 	import { getPlayerName } from '$lib/utils';
-	import { doc, onSnapshot } from 'firebase/firestore';
+	import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
-	import { gameState } from './_store';
+	import Id from '../join/[id].svelte';
+	import { gameState, localState } from './_store';
 
 	let unsub;
+	let docRef;
 
 	$: gameId = $page.params.id;
 	onMount(() => {
-		const docRef = doc(db, `games/${gameId}`);
+		docRef = doc(db, `games/${gameId}`);
 
 		unsub = onSnapshot(docRef, (snap) => {
-			console.log(snap);
-			console.log(snap.data());
+			// console.log(snap);
+			// console.log(snap.data());
 			gameState.set(snap.data());
 		});
 	});
+
+	const handleClick = async () => {
+		await fetch('/api/setReady', {
+			method: 'POST',
+			body: JSON.stringify({
+				gameId,
+				playerId: $localState.playerId
+			})
+		});
+	};
 
 	// onDestroy(() => unsub());
 </script>
@@ -37,12 +49,18 @@
 		{#if $gameState.players}
 			<div>
 				<h3>Players:</h3>
-				{#each $gameState.players as player}
-					<p>{player.name}</p>
+				{#each Object.entries($gameState.players) as [id, data]}
+					<p>{data.name} <span>({data.ready ? 'Ready' : 'Not Ready'})</span></p>
 				{/each}
 			</div>
 		{/if}
 
-		<a href="/" class="pt-8 underline">Back</a>
+		<button
+			on:click|preventDefault={handleClick}
+			class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+			type="submit">I'm Ready</button
+		>
+		<br />
+		<a href="/" class="pt-4 underline">Back</a>
 	</div>
 </div>
