@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 
 	import { randId } from '$lib/utils';
-	import { localState } from './game/_store';
 
 	let playerId = randId(5);
 	let playerName;
@@ -23,7 +22,7 @@
 		const json = await res.json();
 		result = JSON.stringify(json);
 
-		localState.set({ ...$localState, playerId });
+		localStorage.setItem('playerId', playerId);
 
 		goto(`/game/${json.gameId}`);
 	}

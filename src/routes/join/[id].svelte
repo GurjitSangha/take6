@@ -23,6 +23,8 @@
 		const json = await res.json();
 		result = JSON.stringify(json);
 
+		localStorage.setItem('playerId', playerId);
+
 		goto(`/game/${json.gameId}`);
 	}
 </script>

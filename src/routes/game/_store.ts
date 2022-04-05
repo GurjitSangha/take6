@@ -12,10 +12,4 @@ export interface GameState {
 	players: Players;
 }
 
-export interface LocalState {
-	playerId?: string;
-}
-
 export const gameState = writable({} as GameState);
-
-export const localState = writable({} as LocalState);

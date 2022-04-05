@@ -4,8 +4,7 @@
 	import { getPlayerName } from '$lib/utils';
 	import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
-	import Id from '../join/[id].svelte';
-	import { gameState, localState } from './_store';
+	import { gameState } from './_store';
 
 	let unsub;
 	let docRef;
@@ -26,7 +25,7 @@
 			method: 'POST',
 			body: JSON.stringify({
 				gameId,
-				playerId: $localState.playerId
+				playerId: localStorage.getItem('playerId')
 			})
 		});
 	};
