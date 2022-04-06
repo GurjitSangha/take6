@@ -8,6 +8,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 
 	const id = randId(5);
 	await setDoc(doc(db, 'games', id), {
+		state: 'lobby',
 		host: host,
 		players: { [player.id]: { name: player.name, ready: false } }
 	});

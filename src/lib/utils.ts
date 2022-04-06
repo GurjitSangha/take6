@@ -7,5 +7,21 @@ export const randId = (length: number): string => {
 };
 
 export const getPlayerName = (players: Players, id: string): string => {
-	return players[id].name;
+	return players?.[id]?.name;
+};
+
+export const sendRequest = async ({ path, data, method = 'POST' }): Promise<Response> => {
+	const response = await fetch(path, {
+		method,
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	});
+
+	if (!response.ok) {
+		throw new Error(`${response.status} ${response.statusText}`);
+	}
+
+	return response;
 };

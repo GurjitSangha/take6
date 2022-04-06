@@ -2,22 +2,23 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import { randId } from '$lib/utils';
+	import { randId, sendRequest } from '$lib/utils';
 
 	let playerId = randId(5);
 	let playerName;
 	let result = 'res goes here';
 
 	async function handleClick() {
-		const res = await fetch('/api/joinGame', {
+		const res = await sendRequest({
+			path: '/api/joinGame',
 			method: 'POST',
-			body: JSON.stringify({
+			data: {
 				id: $page.params.id,
 				player: {
 					id: playerId,
 					name: playerName
 				}
-			})
+			}
 		});
 
 		const json = await res.json();

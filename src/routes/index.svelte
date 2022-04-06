@@ -1,22 +1,23 @@
 <script>
 	import { goto } from '$app/navigation';
 
-	import { randId } from '$lib/utils';
+	import { randId, sendRequest } from '$lib/utils';
 
 	let playerId = randId(5);
 	let playerName;
 	let result = 'res goes here';
 
 	async function handleClick() {
-		const res = await fetch('/api/createGame', {
+		const res = await sendRequest({
+			path: '/api/createGame',
 			method: 'POST',
-			body: JSON.stringify({
+			data: {
 				host: playerId,
 				player: {
 					id: playerId,
 					name: playerName
 				}
-			})
+			}
 		});
 
 		const json = await res.json();
