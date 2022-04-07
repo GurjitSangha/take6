@@ -3,17 +3,17 @@ import { firestore as db } from '$lib/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 
 export async function post({ request }): Promise<RequestHandlerOutput> {
-	const { id, player } = await request.json();
+	const { gameId, player } = await request.json();
 
-	await updateDoc(doc(db, 'games', id), {
+	await updateDoc(doc(db, 'games', gameId), {
 		[`players.${player.id}`]: { name: player.name, ready: false }
 	});
-	console.log(`joined game ${id}`);
+	console.log(`${player.id} joined game ${gameId}`);
 
 	return {
 		status: 200,
 		body: {
-			gameId: id
+			gameId
 		}
 	};
 }

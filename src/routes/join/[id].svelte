@@ -13,7 +13,7 @@
 			path: '/api/joinGame',
 			method: 'POST',
 			data: {
-				id: $page.params.id,
+				gameId: $page.params.id,
 				player: {
 					id: playerId,
 					name: playerName
