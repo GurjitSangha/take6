@@ -19,12 +19,7 @@ interface collections {
 			selectedCards: {
 				[playerId: string]: number;
 			};
-			rows: {
-				1: [number];
-				2: [number];
-				3: [number];
-				4: [number];
-			};
+			rows: [[number]];
 		};
 	};
 }
