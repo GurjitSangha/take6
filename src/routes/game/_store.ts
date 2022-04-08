@@ -2,17 +2,19 @@ import { writable } from 'svelte/store';
 
 export type State = 'lobby' | 'playing' | 'finished';
 
-export type Players = {
+export type DbPlayers = {
 	[id: string]: {
 		name: string;
-		ready: boolean;
+		score: number;
+		isReady: boolean;
+		isHost: boolean;
 	};
 };
 
 export interface GameState {
 	state: State;
 	host: string;
-	players: Players;
 }
 
 export const gameState = writable({} as GameState);
+export const dbPlayers = writable({} as DbPlayers);

@@ -2,11 +2,17 @@
 	import { goto } from '$app/navigation';
 
 	import { getPlayerName, sendRequest } from '$lib/utils';
+	import { onMount } from 'svelte';
 
 	export let gameId;
-	export let host;
 	export let players;
 	export let playerId;
+
+	$: me = players?.[playerId];
+
+	onMount(() => {
+		console.log('lobby', { players });
+	});
 
 	const toggleReady = async () => {
 		sendRequest({
@@ -49,10 +55,10 @@
 			Welcome to game {gameId}
 		</h2>
 
-		{#if host && playerId}
+		{#if playerId}
 			<div>
-				<h3>Host: {getPlayerName(players, host)}</h3>
 				<h3>You are: {getPlayerName(players, playerId)}</h3>
+				<h3>{me?.isHost ? 'You are the host!' : ''}</h3>
 			</div>
 		{/if}
 
@@ -62,7 +68,7 @@
 				{#each Object.entries(players) as [id, data]}
 					<p>
 						{getPlayerName(players, id)}
-						({data.ready ? 'Ready' : 'Not Ready'})
+						({data.isReady ? 'Ready' : 'Not Ready'})
 					</p>
 				{/each}
 			</div>
@@ -73,9 +79,9 @@
 			class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
 			type="submit"
 		>
-			{players?.[playerId]?.ready ? "I'm Not Ready" : "I'm Ready"}
+			{me?.isReady ? "I'm Not Ready" : "I'm Ready"}
 		</button>
-		{#if host === playerId}
+		{#if me?.isHost}
 			<button
 				on:click|preventDefault={startGame}
 				class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"

@@ -4,15 +4,20 @@ import { doc, setDoc } from 'firebase/firestore';
 import { randId } from '$lib/utils';
 
 export async function post({ request }): Promise<RequestHandlerOutput> {
-	const { host, player } = await request.json();
+	const { player } = await request.json();
 
 	const id = randId(5);
-	await setDoc(doc(db, 'games', id), {
-		state: 'lobby',
-		host: host,
-		players: { [player.id]: { name: player.name, ready: false } }
+	const docRef = doc(db, 'games', id);
+	await setDoc(docRef, {
+		state: 'lobby'
 	});
 	console.log(`game created ${id}`);
+
+	await setDoc(doc(db, `games/${id}/players/${player.id}`), {
+		name: player.name,
+		isReady: false,
+		isHost: true
+	});
 
 	return {
 		status: 200,

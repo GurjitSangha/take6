@@ -5,13 +5,12 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 export async function post({ request }): Promise<RequestHandlerOutput> {
 	const { gameId, playerId } = await request.json();
 
-	const docRef = doc(db, 'games', gameId);
+	const docRef = doc(db, `games/${gameId}/players/${playerId}`);
 	const prev = (await getDoc(docRef)).data();
 
 	await updateDoc(docRef, {
-		[`players.${playerId}.ready`]: !prev.players[playerId].ready
+		isReady: !prev.isReady
 	});
-	console.log(`(${gameId}): ${playerId} is ready`);
 
 	return {
 		status: 200

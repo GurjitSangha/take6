@@ -12,7 +12,6 @@
 			path: '/api/createGame',
 			method: 'POST',
 			data: {
-				host: playerId,
 				player: {
 					id: playerId,
 					name: playerName
