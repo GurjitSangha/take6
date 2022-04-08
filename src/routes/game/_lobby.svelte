@@ -31,6 +31,16 @@
 
 		goto('/');
 	};
+
+	const startGame = async () => {
+		sendRequest({
+			path: '/api/startGame',
+			method: 'POST',
+			data: {
+				gameId
+			}
+		});
+	};
 </script>
 
 <div class="min-h-full flex items-center justify-center py-12 px-4">
@@ -65,6 +75,15 @@
 		>
 			{players?.[playerId]?.ready ? "I'm Not Ready" : "I'm Ready"}
 		</button>
+		{#if host === playerId}
+			<button
+				on:click|preventDefault={startGame}
+				class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+				type="submit"
+			>
+				Start Game
+			</button>
+		{/if}
 		<button
 			on:click|preventDefault={leaveGame}
 			class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"

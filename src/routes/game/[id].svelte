@@ -3,6 +3,7 @@
 	import { firestore as db } from '$lib/firebase';
 	import { doc, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
+	import Board from './_board.svelte';
 	import Lobby from './_lobby.svelte';
 	import { gameState } from './_store';
 
@@ -34,4 +35,6 @@
 
 {#if $gameState.state === 'lobby'}
 	<Lobby host={$gameState.host} players={$gameState.players} {playerId} {gameId} />
+{:else if $gameState.state === 'playing'}
+	<Board players={$gameState.players} />
 {/if}

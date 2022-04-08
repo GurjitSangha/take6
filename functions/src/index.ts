@@ -23,4 +23,37 @@ exports.deleteGame = functions.firestore.document('/games/{gameId}').onUpdate((c
 		console.log(`${gameId} has no players left, deleting`);
 		return admin.firestore().doc(`/games/${gameId}`).delete();
 	}
+	return null;
+});
+
+// Deal cards when game state changes from lobby to playing
+// exports.dealCards = functions.firestore.document('/games/{gameId}').onUpdate((change, context) => {
+exports.dealCards = functions.https.onRequest((req, res) => {
+	// const { gameId } = context.params;
+	// const { state, players } = change.after.data();
+	// const { state: prevState } = change.before.data();
+
+	// if (state === 'playing') {
+	// && prevState === 'lobby') {
+	// console.log(`${gameId} is now playing, dealing cards`);
+	let count = 104;
+	let deck = Array.from({ length: count }, (_, i) => i + 1);
+	while (count > 0) {
+		deck.push(deck.splice(Math.floor(Math.random() * count), 1)[0]);
+		count -= 1;
+	}
+
+	console.log({ deck });
+
+	// return admin.firestore().doc(`/games/${gameId}`).update({
+	// 	state: 'playing',
+	// 	// players: {
+	// 	// 	...change.after.data().players,
+	// 	// 	...change.before.data().players
+	// 	// }
+	// });
+	// }
+
+	return null;
+	res.send('OK');
 });
