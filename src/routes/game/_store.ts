@@ -13,8 +13,14 @@ export type DbPlayers = {
 
 export interface GameState {
 	state: State;
-	host: string;
+	gameId?: string;
+	playerId?: string;
 }
+
+export type DbHand = [number];
+
+export type CardRow = [number];
 
 export const gameState = writable({} as GameState);
 export const dbPlayers = writable({} as DbPlayers);
+export const dbHand = writable([]);

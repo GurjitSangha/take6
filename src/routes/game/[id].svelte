@@ -9,29 +9,31 @@
 
 	let unsub;
 	let playersUnsub;
+
 	let playerId;
+	let rows;
 
 	$: gameId = $page.params.id;
 	onMount(() => {
-		const docRef = doc(db, `games/${gameId}`);
 		playerId = localStorage.getItem('playerId');
 
-		unsub = onSnapshot(docRef, (snap) => {
+		unsub = onSnapshot(doc(db, `games/${gameId}`), (snap) => {
 			const data = snap.data();
 			console.log('gameSnap', { data });
 			gameState.set({
 				state: data.state,
-				host: data.host
+				gameId,
+				playerId
 			});
+			rows = data.rows ? Object.values(data.rows) : [];
 		});
 
-		const playersCol = collection(db, 'games', gameId, 'players');
-		playersUnsub = onSnapshot(playersCol, (snap) => {
+		playersUnsub = onSnapshot(collection(db, `games/${gameId}/players`), (snap) => {
 			const players = snap.docs.reduce((acc, doc) => {
 				acc[doc.id] = doc.data();
 				return acc;
 			}, {});
-			console.log('snap', { players });
+			console.log('playersSnap', { players });
 			dbPlayers.set(players);
 		});
 	});
@@ -49,5 +51,5 @@
 {#if $gameState.state === 'lobby'}
 	<Lobby players={$dbPlayers} {playerId} {gameId} />
 {:else if $gameState.state === 'playing'}
-	<!-- <Board players={$gameState.players} /> -->
+	<Board players={$dbPlayers} {rows} />
 {/if}

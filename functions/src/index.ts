@@ -19,6 +19,10 @@ exports.deleteGame = functions.firestore.document('/games/{gameId}').onUpdate((c
 	const { players } = change.after.data();
 	const { players: prevPlayers } = change.before.data();
 
+	if (!prevPlayers || !players) {
+		return;
+	}
+
 	if (Object.keys(players).length === 0 && Object.keys(prevPlayers).length > 0) {
 		console.log(`${gameId} has no players left, deleting`);
 		return admin.firestore().doc(`/games/${gameId}`).delete();

@@ -84,7 +84,7 @@
 		{#if me?.isHost}
 			<button
 				on:click|preventDefault={startGame}
-				class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+				class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
 				type="submit"
 			>
 				Start Game
