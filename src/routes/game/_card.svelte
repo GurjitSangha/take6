@@ -1,8 +1,8 @@
 <script>
 	export let value;
 	export let score;
-	export let selected;
-	export let onClick;
+	export let selected = false;
+	export let onClick = null;
 </script>
 
 <button
