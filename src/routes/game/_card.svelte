@@ -1,12 +1,19 @@
 <script>
 	export let value;
 	export let score;
+	export let selected;
+	export let onClick;
 </script>
 
-<div
-	class="p-4 border border-gray-200 rounded w-auto bg-white hover:bg-gray-50 hover:border-t-4 hover:border-t-blue-500 flex items-center"
+<button
+	on:click={() => {
+		if (onClick) onClick(value);
+	}}
+	data-value={value}
+	class="p-4 border border-gray-200 rounded w-auto bg-white hover:bg-gray-50 flex items-center"
+	class:bg-green-400={selected}
 >
-	<h1 class="font-bold text-gray-700 text-sm">{value}</h1>
+	<p class="font-bold text-gray-700 text-sm">{value}</p>
 	<br />
-	<h2 class="font-bold text-gray-700 text-sm">({score})</h2>
-</div>
+	<p class="font-bold text-gray-700 text-sm">({score})</p>
+</button>
