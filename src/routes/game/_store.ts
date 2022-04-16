@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export type State = 'lobby' | 'playing' | 'finished';
+export type State = 'lobby' | 'selecting' | 'placing' | 'finished';
 
 export type DbPlayers = {
 	[id: string]: {
@@ -18,9 +18,11 @@ export interface GameState {
 }
 
 export type DbHand = [number];
+export type DbSelectedCards = any;
 
 export type CardRow = [number];
 
 export const gameState = writable({} as GameState);
 export const dbPlayers = writable({} as DbPlayers);
 export const dbHand = writable([]);
+export const dbSelectedCards = writable({} as DbSelectedCards);

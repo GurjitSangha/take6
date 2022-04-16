@@ -6,9 +6,9 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 	const { gameId } = await request.json();
 
 	await updateDoc(doc(db, 'games', gameId), {
-		state: 'selecting'
+		state: 'placing'
 	});
-	console.log(`started game ${gameId}`);
+	console.log(`started turn ${gameId}`);
 
 	return {
 		status: 200

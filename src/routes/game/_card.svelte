@@ -1,8 +1,11 @@
 <script>
+	import { getCardScore } from '$lib/utils';
+
 	export let value;
-	export let score;
 	export let selected = false;
 	export let onClick = null;
+
+	$: score = getCardScore(value);
 </script>
 
 <button
