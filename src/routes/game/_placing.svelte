@@ -21,7 +21,7 @@
 		// get last element of each row
 		const lastCards = {};
 		rows.forEach((row, idx) => {
-			lastCards[idx] = row.at(-1);
+			lastCards[idx] = row.values.at(-1);
 		});
 		const res = Object.entries(lastCards)
 			.filter(([_, rowEndCard]) => rowEndCard < card)
@@ -72,10 +72,12 @@
 
 		<div class="flex">
 			{#each [...selectedCards] as [card, playerId]}
-				<div class="flex-1">
-					<div class="text-sm font-semibold">{getPlayerName($dbPlayers, playerId)}</div>
-					<Card value={card} />
-				</div>
+				{#if card}
+					<div class="flex-1">
+						<div class="text-sm font-semibold">{getPlayerName($dbPlayers, playerId)}</div>
+						<Card value={card} />
+					</div>
+				{/if}
 			{/each}
 		</div>
 

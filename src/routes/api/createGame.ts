@@ -9,8 +9,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 	const id = randId(5);
 	const docRef = doc(db, 'games', id);
 	await setDoc(docRef, {
-		state: 'lobby',
-		rows: []
+		state: 'lobby'
 	});
 	console.log(`game created ${id}`);
 

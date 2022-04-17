@@ -8,7 +8,7 @@
 
 	$: displayRows = rows?.map((row) => {
 		return [0, 1, 2, 3, 4, 5].map((space) => {
-			return row[space] || 0;
+			return row.values[space] || 0;
 		});
 	});
 </script>

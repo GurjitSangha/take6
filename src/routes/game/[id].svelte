@@ -12,6 +12,7 @@
 	let unsub;
 	let playersUnsub;
 	let selectedCardsUnsub;
+	let rowsUnsub;
 
 	let playerId;
 	let rows;
@@ -41,6 +42,16 @@
 			dbPlayers.set(players);
 		});
 
+		rowsUnsub = onSnapshot(collection(db, `games/${gameId}/rows`), (snap) => {
+			const dbRows = snap.docs.reduce((acc, doc) => {
+				acc[doc.id] = doc.data() || null;
+				return acc;
+			}, {});
+			console.log('rowsSnap', { dbRows });
+			rows = Object.values(dbRows);
+			console.log(rows);
+		});
+
 		// Watch for changes to selected cards
 		selectedCardsUnsub = onSnapshot(
 			collection(db, `games/${$gameState.gameId}/selectedCards`),
@@ -53,7 +64,7 @@
 					res
 				});
 				selectedCards = res;
-				// checkAllPlayersSelected();
+				checkAllPlayersSelected();
 			}
 		);
 	});
@@ -80,6 +91,9 @@
 		}
 		if (selectedCardsUnsub) {
 			selectedCardsUnsub();
+		}
+		if (rowsUnsub) {
+			rowsUnsub();
 		}
 	});
 </script>

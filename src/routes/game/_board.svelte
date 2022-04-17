@@ -1,8 +1,7 @@
 <script>
 	import { firestore as db } from '$lib/firebase';
-
-	import { getCardScore, getPlayerName, sendRequest } from '$lib/utils';
-	import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
+	import { getPlayerName, sendRequest } from '$lib/utils';
+	import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
 	import Rows from './_rows.svelte';
