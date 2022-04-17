@@ -12,10 +12,11 @@
 	let players;
 	let playersUnsub;
 	let selectedCards = new Map();
+	let selectedCardsUnsub;
+	let pickableRows = [];
 
-	$: activeCard = [...selectedCards]?.[0]?.[0];
-	$: activePlayer = [...selectedCards]?.[0]?.[1];
-	$: pickableRows = [];
+	let activeCard;
+	let activePlayer;
 
 	const getPickableRows = (player, card) => {
 		if (player !== $gameState.playerId) return [];
@@ -31,9 +32,9 @@
 		return res;
 	};
 
-	const onPickRow = (rowId) => {
+	const onPickRow = async (rowId) => {
 		console.log(`you've picked row ${rowId}`);
-		sendRequest({
+		await sendRequest({
 			path: '/api/pickRow',
 			method: 'POST',
 			data: {
@@ -43,6 +44,9 @@
 				card: activeCard
 			}
 		});
+		const temp = selectedCards;
+		temp.delete($gameState.playerId);
+		selectedCards = temp;
 	};
 
 	onMount(async () => {
@@ -57,29 +61,31 @@
 			console.log('playersSnap', { players });
 		});
 
-		// get the selected cards from the db
-		let cards = {};
-		const snap = await getDocs(collection(db, `games/${$gameState.gameId}/selectedCards`));
-		snap.forEach((doc) => {
-			cards[doc.data().value] = doc.id;
-		});
-		const tempMap = new Map();
-		// Sort by card value
-		Object.keys(cards)
-			// @ts-ignore
-			.sort((a, b) => a - b)
-			.forEach((card) => {
-				tempMap.set(card, cards[card]);
-			});
-		selectedCards = tempMap;
+		selectedCardsUnsub = onSnapshot(
+			collection(db, `games/${$gameState.gameId}/selectedCards`),
+			(snap) => {
+				const cards = snapReduce(snap);
+				// Sort by card value with a Map
+				const tempMap = new Map();
+				Object.keys(cards)
+					.filter((playerId) => cards[playerId].value !== null)
+					.sort((a, b) => cards[a].value - cards[b].value)
+					.forEach((playerId) => {
+						tempMap.set(cards[playerId].value, playerId);
+					});
+				selectedCards = tempMap;
 
-		[activeCard, activePlayer] = [...selectedCards]?.[0];
-		pickableRows = getPickableRows(activePlayer, activeCard);
+				[activeCard, activePlayer] = [...selectedCards]?.[0];
+				pickableRows = getPickableRows(activePlayer, activeCard);
+				console.log('selectedCardsSnap', { selectedCards, pickableRows });
+			}
+		);
 	});
 
 	onDestroy(() => {
 		if (rowsUnsub) rowsUnsub();
 		if (playersUnsub) playersUnsub();
+		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 </script>
 
@@ -99,5 +105,6 @@
 		</div>
 
 		<div>Active Player: {getPlayerName(players, activePlayer)}</div>
+		<div>You are {getPlayerName(players, $gameState.playerId)}</div>
 	</div>
 </div>

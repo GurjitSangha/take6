@@ -6,7 +6,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 	const { gameId, playerId, rowId, card } = await request.json();
 
 	await updateDoc(doc(db, `games/${gameId}/rows/${rowId}`), {
-		values: arrayUnion(card)
+		values: arrayUnion(parseInt(card, 10))
 	});
 	await updateDoc(doc(db, `games/${gameId}/selectedCards/${playerId}`), {
 		value: null
