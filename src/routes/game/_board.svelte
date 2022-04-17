@@ -1,34 +1,34 @@
 <script>
 	import { firestore as db } from '$lib/firebase';
-	import { getPlayerName, sendRequest } from '$lib/utils';
-	import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+	import { getPlayerName, sendRequest, snapReduce } from '$lib/utils';
+	import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
 	import Rows from './_rows.svelte';
 	import { gameState } from './_store';
 
-	export let players;
-	export let rows;
-	export let selectedCards = {};
+	let players;
+	let playersUnsub;
+	let rows;
+	let rowsUnsub;
+	let selectedCards;
+	let selectedCardsUnsub;
 	let hand = [];
 	let handUnsub;
-	let selectedCardsUnsub;
+
 	let playerPick;
 
 	onMount(async () => {
-		// Load selected value from firebase
-		const dbSelected = await getDoc(
-			doc(db, `games/${$gameState.gameId}/selectedCards/${$gameState.playerId}`)
-		);
-		if (dbSelected) {
-			playerPick = dbSelected?.data()?.value;
-		}
+		console.log('board mounted');
+		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
+			players = snapReduce(snap);
+			console.log('playersSnap', { players });
+		});
 
-		// Load hand from firebase
-		const dbHand = await getDoc(doc(db, `games/${$gameState.gameId}/hands/${$gameState.playerId}`));
-		if (dbHand) {
-			hand = dbHand.data().value.sort((a, b) => a - b);
-		}
+		rowsUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/rows`), (snap) => {
+			rows = Object.values(snapReduce(snap));
+			console.log('rowsSnap', { rows });
+		});
 
 		handUnsub = onSnapshot(
 			doc(db, `games/${$gameState.gameId}/hands/${$gameState.playerId}`),
@@ -38,15 +38,36 @@
 				console.log('handsSnap', { hand });
 			}
 		);
+
+		selectedCardsUnsub = onSnapshot(
+			collection(db, `games/${$gameState.gameId}/selectedCards`),
+			(snap) => {
+				selectedCards = snapReduce(snap);
+				playerPick = selectedCards?.[$gameState.playerId]?.value;
+				console.log('selectedCardsSnap', { selectedCards });
+				checkAllPlayersSelected();
+			}
+		);
 	});
 
+	const checkAllPlayersSelected = () => {
+		if (Object.values(selectedCards).every((v) => v.value)) {
+			console.log('all players selected, starting placing');
+			sendRequest({
+				path: '/api/startPlacing',
+				method: 'POST',
+				data: {
+					gameId: $gameState.gameId
+				}
+			});
+		}
+	};
+
 	onDestroy(() => {
-		if (handUnsub) {
-			handUnsub();
-		}
-		if (selectedCardsUnsub) {
-			selectedCardsUnsub();
-		}
+		if (handUnsub) handUnsub();
+		if (playersUnsub) playersUnsub();
+		if (rowsUnsub) rowsUnsub();
+		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 
 	const handleCardClick = (card) => {

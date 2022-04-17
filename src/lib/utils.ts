@@ -1,4 +1,4 @@
-import type { Players } from 'src/routes/game/_store';
+import type { DbPlayers } from 'src/routes/game/_store';
 
 export const randId = (length: number): string => {
 	return Math.random()
@@ -6,7 +6,7 @@ export const randId = (length: number): string => {
 		.slice(2, 2 + length);
 };
 
-export const getPlayerName = (players: Players, id: string): string => {
+export const getPlayerName = (players: DbPlayers, id: string): string => {
 	return players?.[id]?.name + ' (' + id + ')';
 };
 
@@ -34,3 +34,9 @@ export const getCardScore = (value: number): number => {
 	if (value % 5 === 0) return 2;
 	return 1;
 };
+
+export const snapReduce = (snap) =>
+	snap.docs.reduce((acc, doc) => {
+		acc[doc.id] = doc.data() || null;
+		return acc;
+	}, {});

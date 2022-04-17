@@ -1,17 +1,28 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { firestore as db } from '$lib/firebase';
+	import { getPlayerName, sendRequest, snapReduce } from '$lib/utils';
+	import { collection, onSnapshot } from 'firebase/firestore';
+	import { onDestroy, onMount } from 'svelte';
+	import { gameState } from './_store';
 
-	import { getPlayerName, sendRequest } from '$lib/utils';
-	import { onMount } from 'svelte';
+	let players;
+	let playersUnsub;
 
-	export let gameId;
-	export let players;
-	export let playerId;
-
-	$: me = players?.[playerId];
+	$: me = players?.[$gameState.playerId];
 
 	onMount(() => {
-		console.log('lobby', { players });
+		console.log('lobby mounted');
+		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
+			players = snapReduce(snap);
+			console.log('playersSnap', { players });
+		});
+	});
+
+	onDestroy(() => {
+		if (playersUnsub) {
+			playersUnsub();
+		}
 	});
 
 	const toggleReady = async () => {
@@ -19,8 +30,8 @@
 			path: '/api/setReady',
 			method: 'POST',
 			data: {
-				gameId,
-				playerId
+				gameId: $gameState.gameId,
+				playerId: $gameState.playerId
 			}
 		});
 	};
@@ -30,8 +41,8 @@
 			path: '/api/leaveGame',
 			method: 'POST',
 			data: {
-				gameId,
-				playerId
+				gameId: $gameState.gameId,
+				playerId: $gameState.playerId
 			}
 		});
 
@@ -43,7 +54,7 @@
 			path: '/api/startGame',
 			method: 'POST',
 			data: {
-				gameId
+				gameId: $gameState.gameId
 			}
 		});
 	};
@@ -52,12 +63,12 @@
 <div class="min-h-full flex items-center justify-center py-12 px-4">
 	<div class="max-w-md w-full space-y-8 text-gray-500 dark:text-white">
 		<h2 class="text-center text-3xl font-extrabold">
-			Welcome to game {gameId}
+			Welcome to game {$gameState.gameId}
 		</h2>
 
-		{#if playerId}
+		{#if $gameState.playerId}
 			<div>
-				<h3>You are: {getPlayerName(players, playerId)}</h3>
+				<h3>You are: {getPlayerName(players, $gameState.playerId)}</h3>
 				<h3>{me?.isHost ? 'You are the host!' : ''}</h3>
 			</div>
 		{/if}
@@ -98,7 +109,7 @@
 			Leave Game
 		</button>
 		<br />
-		<p>Join Link: http://localhost:3000/join/{gameId}</p>
+		<p>Join Link: http://localhost:3000/join/{$gameState.gameId}</p>
 		<a href="/" class="pt-4 underline">Back</a>
 	</div>
 </div>

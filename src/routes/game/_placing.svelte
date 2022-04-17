@@ -1,15 +1,16 @@
 <script>
-	import { collection, getDocs } from 'firebase/firestore';
 	import { firestore as db } from '$lib/firebase';
-
-	import { onMount } from 'svelte';
-
-	import Rows from './_rows.svelte';
-	import { dbPlayers, gameState } from './_store';
-	import { getPlayerName, sendRequest } from '$lib/utils';
+	import { getPlayerName, sendRequest, snapReduce } from '$lib/utils';
+	import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
+	import Rows from './_rows.svelte';
+	import { gameState } from './_store';
 
-	export let rows;
+	let rows;
+	let rowsUnsub;
+	let players;
+	let playersUnsub;
 	let selectedCards = new Map();
 
 	$: activeCard = [...selectedCards]?.[0]?.[0];
@@ -23,10 +24,10 @@
 		rows.forEach((row, idx) => {
 			lastCards[idx] = row.values.at(-1);
 		});
+		// get the rows that have lower last cards
 		const res = Object.entries(lastCards)
 			.filter(([_, rowEndCard]) => rowEndCard < card)
 			.map(([idx]) => idx);
-		console.log({ rows, res });
 		return res;
 	};
 
@@ -45,9 +46,20 @@
 	};
 
 	onMount(async () => {
+		console.log('placing mounted');
+		rowsUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/rows`), (snap) => {
+			rows = Object.values(snapReduce(snap));
+			console.log('rowsSnap', { rows });
+		});
+
+		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
+			players = snapReduce(snap);
+			console.log('playersSnap', { players });
+		});
+
 		// get the selected cards from the db
-		const snap = await getDocs(collection(db, `games/${$gameState.gameId}/selectedCards`));
 		let cards = {};
+		const snap = await getDocs(collection(db, `games/${$gameState.gameId}/selectedCards`));
 		snap.forEach((doc) => {
 			cards[doc.data().value] = doc.id;
 		});
@@ -64,6 +76,11 @@
 		[activeCard, activePlayer] = [...selectedCards]?.[0];
 		pickableRows = getPickableRows(activePlayer, activeCard);
 	});
+
+	onDestroy(() => {
+		if (rowsUnsub) rowsUnsub();
+		if (playersUnsub) playersUnsub();
+	});
 </script>
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
@@ -74,13 +91,13 @@
 			{#each [...selectedCards] as [card, playerId]}
 				{#if card}
 					<div class="flex-1">
-						<div class="text-sm font-semibold">{getPlayerName($dbPlayers, playerId)}</div>
+						<div class="text-sm font-semibold">{getPlayerName(players, playerId)}</div>
 						<Card value={card} />
 					</div>
 				{/if}
 			{/each}
 		</div>
 
-		<div>Active Player: {getPlayerName($dbPlayers, activePlayer)}</div>
+		<div>Active Player: {getPlayerName(players, activePlayer)}</div>
 	</div>
 </div>
