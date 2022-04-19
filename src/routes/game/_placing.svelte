@@ -20,20 +20,26 @@
 
 	const getPickableRows = (player, card) => {
 		if (player !== $gameState.playerId) return [];
+		console.log(`getPickableRows: ${getPlayerName(players, player)} ${card}`);
 		// get last element of each row
 		const lastCards = {};
 		rows.forEach((row, idx) => {
-			lastCards[idx] = row.values.at(-1);
+			lastCards[idx] = row.values[row.values.length - 1];
 		});
 		// get the rows that have lower last cards
-		const res = Object.entries(lastCards)
+		const pickableRows = Object.entries(lastCards)
 			.filter(([_, rowEndCard]) => rowEndCard < card)
 			.map(([idx]) => idx);
-		return res;
+
+		if (pickableRows.length === 1) {
+			// if only one row is pickable, select it
+			console.log(`only one row is pickable, selecting ${pickableRows[0]}`);
+			onPickRow(pickableRows[0]);
+		}
+		return pickableRows;
 	};
 
 	const onPickRow = async (rowId) => {
-		console.log(`you've picked row ${rowId}`);
 		await sendRequest({
 			path: '/api/pickRow',
 			method: 'POST',
@@ -74,10 +80,22 @@
 						tempMap.set(cards[playerId].value, playerId);
 					});
 				selectedCards = tempMap;
+				console.log('selectedCardsSnap', { selectedCards });
 
-				[activeCard, activePlayer] = [...selectedCards]?.[0];
-				pickableRows = getPickableRows(activePlayer, activeCard);
-				console.log('selectedCardsSnap', { selectedCards, pickableRows });
+				// If all cards have been placed, set game state to 'selecting'
+				if (selectedCards.size === 0) {
+					sendRequest({
+						path: '/api/setGameState',
+						method: 'POST',
+						data: {
+							gameId: $gameState.gameId,
+							state: 'selecting'
+						}
+					});
+				} else {
+					[activeCard, activePlayer] = [...selectedCards]?.[0];
+					pickableRows = getPickableRows(activePlayer, activeCard);
+				}
 			}
 		);
 	});
@@ -91,6 +109,8 @@
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
 	<div class="max-w-lg w-full space-y-8 text-gray-500 dark:text-white">
+		<p>Active Player: {getPlayerName(players, activePlayer)}</p>
+		<p>You are {getPlayerName(players, $gameState.playerId)}</p>
 		<Rows {rows} {pickableRows} onRowClick={onPickRow} />
 
 		<div class="flex">
@@ -103,8 +123,5 @@
 				{/if}
 			{/each}
 		</div>
-
-		<div>Active Player: {getPlayerName(players, activePlayer)}</div>
-		<div>You are {getPlayerName(players, $gameState.playerId)}</div>
 	</div>
 </div>

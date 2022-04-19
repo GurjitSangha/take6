@@ -54,10 +54,11 @@
 		if (Object.values(selectedCards).every((v) => v.value)) {
 			console.log('all players selected, starting placing');
 			sendRequest({
-				path: '/api/startPlacing',
+				path: '/api/setGameState',
 				method: 'POST',
 				data: {
-					gameId: $gameState.gameId
+					gameId: $gameState.gameId,
+					state: 'placing'
 				}
 			});
 		}
