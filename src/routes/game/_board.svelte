@@ -7,37 +7,16 @@
 	import Rows from './_rows.svelte';
 	import { gameState } from './_store';
 
-	let players;
-	let playersUnsub;
-	let rows;
-	let rowsUnsub;
+	export let players;
+	export let rows;
 	let selectedCards;
 	let selectedCardsUnsub;
-	let hand = [];
-	let handUnsub;
+	export let hand = [];
 
 	let playerPick;
 
 	onMount(async () => {
 		console.log('board mounted');
-		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
-			players = snapReduce(snap);
-			console.log('playersSnap', { players });
-		});
-
-		rowsUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/rows`), (snap) => {
-			rows = Object.values(snapReduce(snap));
-			console.log('rowsSnap', { rows });
-		});
-
-		handUnsub = onSnapshot(
-			doc(db, `games/${$gameState.gameId}/hands/${$gameState.playerId}`),
-			(snap) => {
-				const data = snap.data();
-				hand = data?.value ? Array.from(data?.value).sort((a, b) => a - b) : [];
-				console.log('handsSnap', { hand });
-			}
-		);
 
 		selectedCardsUnsub = onSnapshot(
 			collection(db, `games/${$gameState.gameId}/selectedCards`),
@@ -65,9 +44,6 @@
 	};
 
 	onDestroy(() => {
-		if (handUnsub) handUnsub();
-		if (playersUnsub) playersUnsub();
-		if (rowsUnsub) rowsUnsub();
 		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 

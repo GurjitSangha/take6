@@ -1,28 +1,15 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { firestore as db } from '$lib/firebase';
-	import { getPlayerName, sendRequest, snapReduce } from '$lib/utils';
-	import { collection, onSnapshot } from 'firebase/firestore';
-	import { onDestroy, onMount } from 'svelte';
+	import { getPlayerName, sendRequest } from '$lib/utils';
+	import { onMount } from 'svelte';
 	import { gameState } from './_store';
 
-	let players;
-	let playersUnsub;
+	export let players;
 
 	$: me = players?.[$gameState.playerId];
 
 	onMount(() => {
 		console.log('lobby mounted');
-		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
-			players = snapReduce(snap);
-			console.log('playersSnap', { players });
-		});
-	});
-
-	onDestroy(() => {
-		if (playersUnsub) {
-			playersUnsub();
-		}
 	});
 
 	const toggleReady = async () => {

@@ -7,10 +7,8 @@
 	import Rows from './_rows.svelte';
 	import { gameState } from './_store';
 
-	let rows;
-	let rowsUnsub;
-	let players;
-	let playersUnsub;
+	export let rows = [];
+	export let players;
 	let selectedCards = new Map();
 	let selectedCardsUnsub;
 	let pickableRows = [];
@@ -65,16 +63,6 @@
 
 	onMount(async () => {
 		console.log('placing mounted');
-		rowsUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/rows`), (snap) => {
-			rows = Object.values(snapReduce(snap));
-			console.log('rowsSnap', { rows });
-		});
-
-		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
-			players = snapReduce(snap);
-			console.log('playersSnap', { players });
-		});
-
 		selectedCardsUnsub = onSnapshot(
 			collection(db, `games/${$gameState.gameId}/selectedCards`),
 			(snap) => {
@@ -109,8 +97,6 @@
 	});
 
 	onDestroy(() => {
-		if (rowsUnsub) rowsUnsub();
-		if (playersUnsub) playersUnsub();
 		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 </script>

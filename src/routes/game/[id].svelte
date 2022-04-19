@@ -1,7 +1,8 @@
 <script>
 	import { page } from '$app/stores';
 	import { firestore as db } from '$lib/firebase';
-	import { doc, onSnapshot } from 'firebase/firestore';
+	import { snapReduce } from '$lib/utils';
+	import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Board from './_board.svelte';
 	import Lobby from './_lobby.svelte';
@@ -9,10 +10,17 @@
 	import { gameState } from './_store';
 
 	let unsub;
-	let playerId;
+	let players;
+	let playersUnsub;
+	let rows;
+	let rowsUnsub;
+	let hand;
+	let handUnsub;
 
+	let playerId;
 	$: gameId = $page.params.id;
-	onMount(() => {
+
+	onMount(async () => {
 		playerId = localStorage.getItem('playerId');
 
 		unsub = onSnapshot(doc(db, `games/${gameId}`), (snap) => {
@@ -25,51 +33,41 @@
 			});
 		});
 
-		// playersUnsub = onSnapshot(collection(db, `games/${gameId}/players`), (snap) => {
-		// 	const players = snap.docs.reduce((acc, doc) => {
-		// 		acc[doc.id] = doc.data() || null;
-		// 		return acc;
-		// 	}, {});
-		// 	console.log('playersSnap', { players });
-		// 	dbPlayers.set(players);
-		// });
+		const dbPlayers = await getDocs(collection(db, `games/${gameId}/players`));
+		players = snapReduce(dbPlayers);
+		console.log('playersInit', { dbPlayers, players });
+		playersUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/players`), (snap) => {
+			players = snapReduce(snap);
+			console.log('playersSnap', { snap: snap.docs, players });
+		});
 
-		// rowsUnsub = onSnapshot(collection(db, `games/${gameId}/rows`), (snap) => {
-		// 	const dbRows = snap.docs.reduce((acc, doc) => {
-		// 		acc[doc.id] = doc.data() || null;
-		// 		return acc;
-		// 	}, {});
-		// 	console.log('rowsSnap', { dbRows });
-		// 	rows = Object.values(dbRows);
-		// 	console.log(rows);
-		// });
+		rowsUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/rows`), (snap) => {
+			rows = Object.values(snapReduce(snap));
+			console.log('rowsSnap', { rows });
+		});
 
-		// // Watch for changes to selected cards
-		// selectedCardsUnsub = onSnapshot(
-		// 	collection(db, `games/${$gameState.gameId}/selectedCards`),
-		// 	(snap) => {
-		// 		const res = snap.docs.reduce((acc, doc) => {
-		// 			acc[doc.id] = doc.data();
-		// 			return acc;
-		// 		}, {});
-		// 		console.log('selectedCardsSnap', {
-		// 			res
-		// 		});
-		// 		selectedCards = res;
-		// 		checkAllPlayersSelected();
-		// 	}
-		// );
+		handUnsub = onSnapshot(
+			doc(db, `games/${$gameState.gameId}/hands/${$gameState.playerId}`),
+			(snap) => {
+				const data = snap.data();
+				hand = data?.value ? Array.from(data?.value).sort((a, b) => a - b) : [];
+				console.log('handsSnap', { hand });
+			}
+		);
 	});
 
 	onDestroy(() => {
 		if (unsub) unsub();
+		if (playersUnsub) playersUnsub();
+		if (rowsUnsub) rowsUnsub();
+		if (handUnsub) handUnsub();
 	});
 </script>
 
 {#if $gameState.state === 'lobby'}
-	<Lobby />
+	<Lobby {players} />
 {:else if $gameState.state === 'selecting'}
-	<Board />
+	<Board {players} {rows} {hand} />
 {:else if $gameState.state === 'placing'}
-	<Placing />
+	<Placing {players} {rows} />
 {/if}

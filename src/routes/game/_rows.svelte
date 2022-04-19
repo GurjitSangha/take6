@@ -1,4 +1,6 @@
 <script>
+	import { getCardScore } from '$lib/utils';
+
 	import { onMount } from 'svelte';
 
 	import Card from './_card.svelte';
@@ -6,16 +8,23 @@
 	export let pickableRows = [];
 	export let onRowClick = (idx) => null;
 
+	let rowScores = [];
+
 	$: displayRows = rows?.map((row) => {
 		return [0, 1, 2, 3, 4, 5].map((space) => {
 			return row.values[space] || 0;
+		});
+	});
+
+	onMount(() => {
+		rowScores = rows?.map((row) => {
+			return row.values.reduce((acc, val) => acc + getCardScore(val), 0);
 		});
 	});
 </script>
 
 {#each displayRows as row, idx}
 	<div class="flex flex-wrap items-center gap-4">
-		{idx}
 		{#if pickableRows.includes(idx.toString())}
 			<div
 				on:click={() => onRowClick(idx)}
@@ -31,5 +40,6 @@
 				<div class="p-4 border border-red-500 rounded w-auto bg-transparent" />
 			{/if}
 		{/each}
+		({rowScores[idx]})
 	</div>
 {/each}
