@@ -36,6 +36,14 @@
 			console.log(`only one row is pickable, selecting ${pickableRows[0]}`);
 			onPickRow(pickableRows[0]);
 		}
+
+		// There are multiple last cards, so pick the closest one
+		if (pickableRows.length > 1) {
+			const sorted = pickableRows.sort((a, b) => lastCards[b] - lastCards[a]);
+			console.log(`multiple rows are pickable, selecting closest value ${sorted[0]}`);
+			onPickRow(sorted[0]);
+		}
+
 		return pickableRows;
 	};
 
