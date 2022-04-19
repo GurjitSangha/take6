@@ -8,8 +8,8 @@
 	import { gameState } from './_store';
 
 	export let rows = [];
-	export let players;
-	export let scores;
+	export let players = {};
+	export let scores = {};
 	let selectedCards = new Map();
 	let selectedCardsUnsub;
 	let pickableRows = [];
@@ -51,7 +51,7 @@
 	const onPickRow = async (rowId, isAutoPick = true) => {
 		console.log(`I'm going to pick row ${rowId}`);
 		if (isAutoPick) {
-			await new Promise((r) => setTimeout(r, 5000));
+			await new Promise((r) => setTimeout(r, 1000));
 		}
 		await sendRequest({
 			path: '/api/pickRow',
@@ -93,7 +93,8 @@
 						method: 'POST',
 						data: {
 							gameId: $gameState.gameId,
-							state: 'selecting'
+							state: 'selecting',
+							players
 						}
 					});
 				} else {

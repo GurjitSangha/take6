@@ -44,3 +44,30 @@ export const snapReduce = (snap) =>
 		acc[doc.id] = doc.data() || null;
 		return acc;
 	}, {});
+
+export const redeal = (players) => {
+	// Create a deck for this game
+	let count = 104;
+	const deck = Array.from({ length: count }, (_, i) => i + 1);
+	while (count > 0) {
+		deck.push(deck.splice(Math.floor(Math.random() * count), 1)[0]);
+		count -= 1;
+	}
+	// Create the player hands
+	const hands = {};
+	Object.keys(players).forEach((playerId) => {
+		hands[playerId] = [deck.pop()];
+	});
+	let cardCount = 9;
+	while (cardCount > 0) {
+		Object.keys(hands).forEach((playerId) => {
+			hands[playerId].push(deck.pop());
+		});
+		cardCount -= 1;
+	}
+
+	return {
+		hands,
+		rows: [0, 1, 2, 3].map(() => deck.pop())
+	};
+};

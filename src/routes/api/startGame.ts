@@ -1,4 +1,5 @@
 import { firestore as db } from '$lib/firebase';
+import { redeal } from '$lib/utils';
 import type { RequestHandlerOutput } from '@sveltejs/kit';
 import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 
@@ -12,31 +13,12 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 		return acc;
 	}, {});
 
-	// Create a deck for this game
-	let count = 104;
-	const deck = Array.from({ length: count }, (_, i) => i + 1);
-	while (count > 0) {
-		deck.push(deck.splice(Math.floor(Math.random() * count), 1)[0]);
-		count -= 1;
-	}
+	const { hands, rows } = redeal(players);
 
-	// Create the player hands
-	const hands = {};
-	Object.keys(players).forEach((playerId) => {
-		hands[playerId] = [deck.pop()];
-	});
-	let cardCount = 9;
-	while (cardCount > 0) {
-		Object.keys(hands).forEach((playerId) => {
-			hands[playerId].push(deck.pop());
-		});
-		cardCount -= 1;
-	}
-
-	// Create the rows
-	[0, 1, 2, 3].forEach(async (row) => {
-		await setDoc(doc(db, `games/${gameId}/rows/${row}`), {
-			values: [deck.pop()]
+	// Save the rows
+	rows.forEach(async (_, id) => {
+		await setDoc(doc(db, `games/${gameId}/rows/${id}`), {
+			values: [rows[id]]
 		});
 	});
 

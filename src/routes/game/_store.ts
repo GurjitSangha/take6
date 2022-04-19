@@ -2,14 +2,15 @@ import { writable } from 'svelte/store';
 
 export type State = 'lobby' | 'selecting' | 'placing' | 'finished';
 
-export type DbPlayers = {
-	[id: string]: {
-		name: string;
-		score: number;
-		isReady: boolean;
-		isHost: boolean;
-	};
-};
+// export type DbPlayers = {
+// 	[id: string]: {
+// 		name: string;
+// 		score: number;
+// 		isReady: boolean;
+// 		isHost: boolean;
+// 	};
+// };
+export type DbPlayers = any;
 
 export interface GameState {
 	state: State;

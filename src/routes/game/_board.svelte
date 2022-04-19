@@ -63,7 +63,7 @@
 </script>
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
-	<div class="max-w-lg w-full space-y-8 text-gray-500 dark:text-white">
+	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
 		{#if players}
 			<div>
 				<h3>Players:</h3>

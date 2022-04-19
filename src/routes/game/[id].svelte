@@ -5,6 +5,7 @@
 	import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Board from './_board.svelte';
+	import Endgame from './_endgame.svelte';
 	import Lobby from './_lobby.svelte';
 	import Placing from './_placing.svelte';
 	import { gameState } from './_store';
@@ -78,4 +79,6 @@
 	<Board {players} {rows} {hand} {scores} />
 {:else if $gameState.state === 'placing'}
 	<Placing {players} {rows} {scores} />
+{:else if $gameState.state === 'finished'}
+	<Endgame {players} {scores} />
 {/if}
