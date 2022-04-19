@@ -33,20 +33,26 @@
 			// if only one row is pickable, select it
 			console.log(`only one row is pickable, selecting ${pickableRows[0]}`);
 			onPickRow(pickableRows[0]);
+			return [];
 		}
 
-		// There are multiple last cards, so pick the closest one
 		if (pickableRows.length > 1) {
+			// There are multiple last cards, so pick the closest one
 			const sorted = pickableRows.sort((a, b) => lastCards[b] - lastCards[a]);
 			console.log(`multiple rows are pickable, selecting closest value ${sorted[0]}`);
 			onPickRow(sorted[0]);
+			return [];
 		}
 
-		return pickableRows;
+		// There are no pickable rows, let the player pick one
+		return [0, 1, 2, 3];
 	};
 
-	const onPickRow = async (rowId) => {
-		await new Promise((r) => setTimeout(r, 5000));
+	const onPickRow = async (rowId, isAutoPick = true) => {
+		console.log(`I'm going to pick row ${rowId}`);
+		if (isAutoPick) {
+			await new Promise((r) => setTimeout(r, 5000));
+		}
 		await sendRequest({
 			path: '/api/pickRow',
 			method: 'POST',
@@ -54,7 +60,8 @@
 				gameId: $gameState.gameId,
 				playerId: $gameState.playerId,
 				rowId,
-				card: activeCard
+				card: activeCard,
+				isAutoPick
 			}
 		});
 		const temp = selectedCards;
@@ -103,7 +110,7 @@
 </script>
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
-	<div class="max-w-lg w-full space-y-8 text-gray-500 dark:text-white">
+	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
 		<div>
 			<h3>Players:</h3>
 			{#each Object.keys(players) as id}

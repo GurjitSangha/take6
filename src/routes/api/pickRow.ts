@@ -4,7 +4,7 @@ import { arrayRemove, arrayUnion, doc, runTransaction, updateDoc } from 'firebas
 import { getCardScore } from '$lib/utils';
 
 export async function post({ request }): Promise<RequestHandlerOutput> {
-	const { gameId, playerId, rowId, card } = await request.json();
+	const { gameId, playerId, rowId, card, isAutoPick } = await request.json();
 
 	try {
 		await runTransaction(db, async (transaction) => {
@@ -12,14 +12,14 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 			const rowDoc = await transaction.get(rowRef);
 			const row = rowDoc.data().values;
 
-			// if row length == 5, calculate score, clear and set card as first elem
-			if (row.length === 5) {
+			// if row length == 5 or it is not an auto pick, calculate score, clear and set card as first elem
+			if (row.length === 5 || !isAutoPick) {
 				const score = row.reduce((acc, cur) => acc + getCardScore(cur), 0);
-				const playerDoc = await transaction.get(doc(db, `games/${gameId}/players/${playerId}`));
+				const playerDoc = await transaction.get(doc(db, `games/${gameId}/scores/${playerId}`));
 				const player = playerDoc.data();
 
-				await transaction.update(doc(db, `games/${gameId}/players/${playerId}`), {
-					score: player.value + score
+				await transaction.update(doc(db, `games/${gameId}/scores/${playerId}`), {
+					value: player.value + score
 				});
 
 				await transaction.update(rowRef, {

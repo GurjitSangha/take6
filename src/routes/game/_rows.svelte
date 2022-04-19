@@ -6,7 +6,7 @@
 	import Card from './_card.svelte';
 	export let rows = [];
 	export let pickableRows = [];
-	export let onRowClick = (idx) => null;
+	export let onRowClick = (idx, isAutoPick) => null;
 
 	let rowScores = [];
 
@@ -30,9 +30,9 @@
 
 {#each displayRows as row, idx}
 	<div class="flex flex-wrap items-center gap-4">
-		{#if pickableRows.includes(idx.toString())}
+		{#if pickableRows.includes(idx)}
 			<div
-				on:click={() => onRowClick(idx)}
+				on:click={() => onRowClick(idx, false)}
 				class="px-2 py-1 border border-green-500 cursor-pointer rounded"
 			>
 				Pick
