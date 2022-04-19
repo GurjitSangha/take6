@@ -1,6 +1,6 @@
 <script>
 	import { firestore as db } from '$lib/firebase';
-	import { getPlayerName, sendRequest, snapReduce } from '$lib/utils';
+	import { getPlayerName, getPlayerScore, sendRequest, snapReduce } from '$lib/utils';
 	import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
@@ -9,9 +9,10 @@
 
 	export let players;
 	export let rows;
+	export let hand = [];
+	export let scores;
 	let selectedCards;
 	let selectedCardsUnsub;
-	export let hand = [];
 
 	let playerPick;
 
@@ -68,7 +69,7 @@
 				<h3>Players:</h3>
 				{#each Object.entries(players) as [id, data]}
 					<div>
-						{getPlayerName(players, id)}
+						{getPlayerName(players, id)} Score: {getPlayerScore(scores, id)}
 						{#if selectedCards?.[id]?.value}
 							<span>selected</span>
 						{:else}

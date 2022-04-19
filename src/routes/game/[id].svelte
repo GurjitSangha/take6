@@ -16,6 +16,8 @@
 	let rowsUnsub;
 	let hand;
 	let handUnsub;
+	let scores;
+	let scoresUnsub;
 
 	let playerId;
 	$: gameId = $page.params.id;
@@ -54,6 +56,11 @@
 				console.log('handsSnap', { hand });
 			}
 		);
+
+		scoresUnsub = onSnapshot(collection(db, `games/${$gameState.gameId}/scores`), (snap) => {
+			scores = snapReduce(snap);
+			console.log('scoresSnap', { scores });
+		});
 	});
 
 	onDestroy(() => {
@@ -61,13 +68,14 @@
 		if (playersUnsub) playersUnsub();
 		if (rowsUnsub) rowsUnsub();
 		if (handUnsub) handUnsub();
+		if (scoresUnsub) scoresUnsub();
 	});
 </script>
 
 {#if $gameState.state === 'lobby'}
 	<Lobby {players} />
 {:else if $gameState.state === 'selecting'}
-	<Board {players} {rows} {hand} />
+	<Board {players} {rows} {hand} {scores} />
 {:else if $gameState.state === 'placing'}
-	<Placing {players} {rows} />
+	<Placing {players} {rows} {scores} />
 {/if}

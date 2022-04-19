@@ -1,6 +1,6 @@
 <script>
 	import { firestore as db } from '$lib/firebase';
-	import { getPlayerName, sendRequest, snapReduce } from '$lib/utils';
+	import { getPlayerName, getPlayerScore, sendRequest, snapReduce } from '$lib/utils';
 	import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
@@ -9,6 +9,7 @@
 
 	export let rows = [];
 	export let players;
+	export let scores;
 	let selectedCards = new Map();
 	let selectedCardsUnsub;
 	let pickableRows = [];
@@ -18,7 +19,6 @@
 
 	const getPickableRows = (player, card) => {
 		if (player !== $gameState.playerId) return [];
-		console.log(`getPickableRows: ${getPlayerName(players, player)} ${card}`);
 		// get last element of each row
 		const lastCards = {};
 		rows.forEach((row, idx) => {
@@ -46,6 +46,7 @@
 	};
 
 	const onPickRow = async (rowId) => {
+		await new Promise((r) => setTimeout(r, 5000));
 		await sendRequest({
 			path: '/api/pickRow',
 			method: 'POST',
@@ -103,6 +104,21 @@
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
 	<div class="max-w-lg w-full space-y-8 text-gray-500 dark:text-white">
+		<div>
+			<h3>Players:</h3>
+			{#each Object.keys(players) as id}
+				<div>
+					<span class="font-bold">{getPlayerName(players, id)}</span>
+					<span>Score: {getPlayerScore(scores, id)}</span>
+					{#if id === $gameState.playerId}
+						<span class="text-green-500">(You)</span>
+					{/if}
+					{#if id === activePlayer}
+						<span class="text-red-500">(Active)</span>
+					{/if}
+				</div>
+			{/each}
+		</div>
 		<p>Active Player: {getPlayerName(players, activePlayer)}</p>
 		<p>You are {getPlayerName(players, $gameState.playerId)}</p>
 		<Rows {rows} {pickableRows} onRowClick={onPickRow} />

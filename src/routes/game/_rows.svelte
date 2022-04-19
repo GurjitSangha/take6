@@ -16,10 +16,15 @@
 		});
 	});
 
+	$: rowScores = rows?.map((row) => {
+		return row.values.reduce((acc, card) => acc + getCardScore(card), 0);
+	});
+
 	onMount(() => {
-		rowScores = rows?.map((row) => {
-			return row.values.reduce((acc, val) => acc + getCardScore(val), 0);
-		});
+		// rowScores = rows?.map((row) => {
+		// 	return row.values.reduce((acc, val) => acc + getCardScore(val), 0);
+		// });
+		// console.log({ rowScores });
 	});
 </script>
 

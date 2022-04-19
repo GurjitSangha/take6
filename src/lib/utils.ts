@@ -10,6 +10,10 @@ export const getPlayerName = (players: DbPlayers, id: string): string => {
 	return players?.[id]?.name + ' (' + id + ')';
 };
 
+export const getPlayerScore = (scores, id: string): number => {
+	return scores?.[id]?.value || 0;
+};
+
 export const sendRequest = async ({ path, data, method = 'POST' }): Promise<Response> => {
 	const response = await fetch(path, {
 		method,
