@@ -6,5 +6,5 @@ node_modules
 .env
 .env.*
 !.env.example
-src/firebase_config.ts
+src/lib/firebase_config.ts
 *.log
