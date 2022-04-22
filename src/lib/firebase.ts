@@ -5,5 +5,7 @@ import config from './firebase_config';
 initializeApp(config);
 
 const firestore = getFirestore();
-connectFirestoreEmulator(firestore, 'localhost', 8080);
+if (import.meta.env.DEV) {
+	connectFirestoreEmulator(firestore, 'localhost', 8080);
+}
 export { firestore };
