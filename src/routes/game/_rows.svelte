@@ -19,17 +19,20 @@
 	$: rowScores = rows?.map((row) => {
 		return row.values.reduce((acc, card) => acc + getCardScore(card), 0);
 	});
-
-	onMount(() => {
-		// rowScores = rows?.map((row) => {
-		// 	return row.values.reduce((acc, val) => acc + getCardScore(val), 0);
-		// });
-		// console.log({ rowScores });
-	});
 </script>
 
 {#each displayRows as row, idx}
 	<div class="flex flex-wrap items-center gap-4">
+		{#each row as value, idx}
+			{#if value !== 0}
+				<Card {value} />
+			{:else if idx == 5}
+				<div class="p-2 border border-red-500 rounded w-8 h-16 bg-transparent" />
+			{:else}
+				<div class="p-2 border border-slate-500 rounded w-8 h-16 bg-transparent" />
+			{/if}
+		{/each}
+		({rowScores[idx]})
 		{#if pickableRows.includes(idx)}
 			<div
 				on:click={() => onRowClick(idx, false)}
@@ -38,13 +41,5 @@
 				Pick
 			</div>
 		{/if}
-		{#each row as value}
-			{#if value !== 0}
-				<Card {value} />
-			{:else}
-				<div class="p-4 border border-red-500 rounded w-auto bg-transparent" />
-			{/if}
-		{/each}
-		({rowScores[idx]})
 	</div>
 {/each}

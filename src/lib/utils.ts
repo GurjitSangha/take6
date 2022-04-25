@@ -7,7 +7,7 @@ export const randId = (length: number): string => {
 };
 
 export const getPlayerName = (players: DbPlayers, id: string): string => {
-	return players?.[id]?.name + ' (' + id + ')';
+	return players?.[id]?.name; // + ' (' + id + ')';
 };
 
 export const getPlayerScore = (scores, id: string): number => {

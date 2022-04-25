@@ -4,6 +4,7 @@
 	import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
+	import Profile from './_profile.svelte';
 	import Rows from './_rows.svelte';
 	import { gameState } from './_store';
 
@@ -112,23 +113,16 @@
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
 	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
-		<div>
-			<h3>Players:</h3>
+		<div class="flex gap-2 flex-wrap justify-center">
 			{#each Object.keys(players) as id}
-				<div>
-					<span class="font-bold">{getPlayerName(players, id)}</span>
-					<span>Score: {getPlayerScore(scores, id)}</span>
-					{#if id === $gameState.playerId}
-						<span class="text-green-500">(You)</span>
-					{/if}
-					{#if id === activePlayer}
-						<span class="text-red-500">(Active)</span>
-					{/if}
-				</div>
+				<Profile
+					name={getPlayerName(players, id)}
+					score={getPlayerScore(scores, id)}
+					icon={id === activePlayer ? 'waiting' : ''}
+					isPlayer={id === $gameState.playerId}
+				/>
 			{/each}
 		</div>
-		<p>Active Player: {getPlayerName(players, activePlayer)}</p>
-		<p>You are {getPlayerName(players, $gameState.playerId)}</p>
 		<Rows {rows} {pickableRows} onRowClick={onPickRow} />
 
 		<div class="flex">

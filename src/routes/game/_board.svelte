@@ -4,8 +4,10 @@
 	import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
 	import Card from './_card.svelte';
+	import Profile from './_profile.svelte';
 	import Rows from './_rows.svelte';
 	import { gameState } from './_store';
+	import { fly } from 'svelte/transition';
 
 	export let players;
 	export let rows;
@@ -65,26 +67,26 @@
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
 	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
 		{#if players}
-			<div>
-				<h3>Players:</h3>
-				{#each Object.entries(players) as [id, data]}
-					<div>
-						{getPlayerName(players, id)} Score: {getPlayerScore(scores, id)}
-						{#if selectedCards?.[id]?.value}
-							<span>selected</span>
-						{:else}
-							<span>waiting...</span>
-						{/if}
-					</div>
+			<div class="flex gap-2 flex-wrap justify-center">
+				{#each Object.entries(players) as [id, _]}
+					<Profile
+						name={getPlayerName(players, id)}
+						score={getPlayerScore(scores, id)}
+						icon={selectedCards?.[id]?.value ? 'selected' : 'waiting'}
+						isPlayer={id === $gameState.playerId}
+					/>
 				{/each}
 			</div>
 		{/if}
 
 		<Rows {rows} />
 	</div>
-</div>
-<div class="fixed bottom-0 flex flex-wrap mx-auto">
-	{#each hand as value}
-		<Card {value} onClick={handleCardClick} selected={playerPick === value} />
-	{/each}
+	<div class="mt-8 flex flex-col items-center">
+		Select a card
+		<div class="mt-4 gap-1 flex flex-wrap mx-auto" transition:fly={{ y: 10, duration: 500 }}>
+			{#each hand as value}
+				<Card {value} onClick={handleCardClick} selected={playerPick === value} />
+			{/each}
+		</div>
+	</div>
 </div>

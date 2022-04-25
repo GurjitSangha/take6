@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { getPlayerName, getPlayerScore, sendRequest } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import Profile from './_profile.svelte';
 	import { gameState } from './_store';
 
 	export let players = {};
@@ -23,16 +24,13 @@
 		<h3 class="text-center font-extrabold">The winner is {getPlayerName(players, winner)}!</h3>
 
 		{#if players}
-			<div>
-				<h3>Final Scores:</h3>
+			<div class="flex gap-2 flex-wrap justify-center">
 				{#each Object.entries(players) as [id, data]}
-					<div>
-						{getPlayerName(players, id)}
-						<span>Score: {getPlayerScore(scores, id)}</span>
-						{#if id === $gameState.playerId}
-							<span>(You)</span>
-						{/if}
-					</div>
+					<Profile
+						name={getPlayerName(players, id)}
+						score={getPlayerScore(scores, id)}
+						isPlayer={id === $gameState.playerId}
+					/>
 				{/each}
 			</div>
 		{/if}
