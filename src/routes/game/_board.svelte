@@ -1,18 +1,14 @@
 <script>
 	import { firestore as db } from '$lib/firebase';
 	import { getPlayerName, getPlayerScore, sendRequest, snapReduce } from '$lib/utils';
-	import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
+	import { collection, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 	import Card from './_card.svelte';
 	import Profile from './_profile.svelte';
 	import Rows from './_rows.svelte';
-	import { gameState } from './_store';
-	import { fly } from 'svelte/transition';
+	import { gameState, handStore, playersStore, scoresStore } from './_store';
 
-	export let players;
-	export let rows;
-	export let hand = [];
-	export let scores;
 	let selectedCards;
 	let selectedCardsUnsub;
 
@@ -47,7 +43,6 @@
 	};
 
 	onDestroy(() => {
-		console.log('board destroyed');
 		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 
@@ -67,12 +62,12 @@
 
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
 	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
-		{#if players}
+		{#if $playersStore}
 			<div class="flex gap-2 flex-wrap justify-center">
-				{#each Object.entries(players) as [id, _]}
+				{#each Object.entries($playersStore) as [id, _]}
 					<Profile
-						name={getPlayerName(players, id)}
-						score={getPlayerScore(scores, id)}
+						name={getPlayerName($playersStore, id)}
+						score={getPlayerScore($scoresStore, id)}
 						icon={selectedCards?.[id]?.value ? 'selected' : 'waiting'}
 						isPlayer={id === $gameState.playerId}
 					/>
@@ -80,12 +75,12 @@
 			</div>
 		{/if}
 
-		<Rows {rows} />
+		<Rows />
 	</div>
 	<div class="mt-8 flex flex-col items-center">
 		Select a card
 		<div class="mt-4 gap-1 flex flex-wrap mx-auto" transition:fly={{ y: 10, duration: 500 }}>
-			{#each hand as value}
+			{#each $handStore as value}
 				<Card {value} onClick={handleCardClick} selected={playerPick === value} />
 			{/each}
 		</div>

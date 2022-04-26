@@ -7,11 +7,8 @@
 	import Card from './_card.svelte';
 	import Profile from './_profile.svelte';
 	import Rows from './_rows.svelte';
-	import { gameState } from './_store';
+	import { gameState, playersStore, rowsStore, scoresStore } from './_store';
 
-	export let rows = [];
-	export let players = {};
-	export let scores = {};
 	let selectedCards = new Map();
 	let selectedCardsUnsub;
 	let pickableRows = [];
@@ -23,7 +20,7 @@
 		if (player !== $gameState.playerId) return [];
 		// get last element of each row
 		const lastCards = {};
-		rows.forEach((row, idx) => {
+		$rowsStore.forEach((row, idx) => {
 			lastCards[idx] = row.values[row.values.length - 1];
 		});
 		// get the rows that have lower last cards
@@ -96,7 +93,7 @@
 						data: {
 							gameId: $gameState.gameId,
 							state: 'selecting',
-							players
+							players: $playersStore
 						}
 					});
 				} else {
@@ -116,22 +113,22 @@
 <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
 	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
 		<div class="flex gap-2 flex-wrap justify-center">
-			{#each Object.keys(players) as id}
+			{#each Object.keys($playersStore) as id}
 				<Profile
-					name={getPlayerName(players, id)}
-					score={getPlayerScore(scores, id)}
+					name={getPlayerName($playersStore, id)}
+					score={getPlayerScore($scoresStore, id)}
 					icon={id === activePlayer ? 'waiting' : ''}
 					isPlayer={id === $gameState.playerId}
 				/>
 			{/each}
 		</div>
-		<Rows {rows} {pickableRows} onRowClick={onPickRow} />
+		<Rows {pickableRows} onRowClick={onPickRow} />
 
 		<div class="flex">
 			{#each [...selectedCards] as [card, playerId]}
 				{#if card}
 					<div class="flex-1" transition:fly={{ y: -10, duration: 500 }}>
-						<div class="text-sm font-semibold">{getPlayerName(players, playerId)}</div>
+						<div class="text-sm font-semibold">{getPlayerName($playersStore, playerId)}</div>
 						<Card value={card} />
 					</div>
 				{/if}

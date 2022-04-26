@@ -24,6 +24,10 @@ export type DbSelectedCards = any;
 export type CardRow = [number];
 
 export const gameState = writable({} as GameState);
-export const dbPlayers = writable({} as DbPlayers);
+export const playersStore = writable({} as DbPlayers);
+export const rowsStore = writable([]);
+export const handStore = writable([]);
+export const scoresStore = writable({});
+
 export const dbHand = writable([]);
 export const dbSelectedCards = writable({} as DbSelectedCards);

@@ -9,7 +9,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 	// If the state is selecting, get the hand of one of the players
 	if (state === 'selecting' && Object.keys(players).length > 0) {
 		// Check for game over
-		const scoreLimit = 10;
+		const scoreLimit = import.meta.env.VITE_SCORE_TARGET;
 		const scoresSnap = await getDocs(collection(db, `games/${gameId}/scores`));
 		const scores = Object.values(snapReduce(scoresSnap)).filter(
 			(score) => score.value >= scoreLimit

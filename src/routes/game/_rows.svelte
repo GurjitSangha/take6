@@ -1,20 +1,20 @@
 <script>
 	import { getCardScore } from '$lib/utils';
-
 	import Card from './_card.svelte';
-	export let rows = [];
+	import { rowsStore } from './_store';
+
 	export let pickableRows = [];
 	export let onRowClick = (idx, isAutoPick) => null;
 
 	let rowScores = [];
 
-	$: displayRows = rows?.map((row) => {
+	$: displayRows = $rowsStore?.map((row) => {
 		return [0, 1, 2, 3, 4, 5].map((space) => {
 			return row.values[space] || 0;
 		});
 	});
 
-	$: rowScores = rows?.map((row) => {
+	$: rowScores = $rowsStore?.map((row) => {
 		return row.values.reduce((acc, card) => acc + getCardScore(card), 0);
 	});
 </script>

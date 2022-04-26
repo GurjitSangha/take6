@@ -34,9 +34,6 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 	} catch (e) {
 		console.log(`failed to update row ${rowId}`);
 	}
-	// await updateDoc(doc(db, `games/${gameId}/rows/${rowId}`), {
-	// 	values: arrayUnion(parseInt(card, 10))
-	// });
 	await updateDoc(doc(db, `games/${gameId}/selectedCards/${playerId}`), {
 		value: null
 	});

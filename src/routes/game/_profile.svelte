@@ -4,6 +4,7 @@
 	export let score = null;
 	export let name;
 	export let isPlayer = false;
+	export let showScore = true;
 
 	export let icon = null;
 </script>
@@ -14,7 +15,7 @@
 >
 	<div class="flex flex-col">
 		<p class="font-bold overflow-hidden text-ellipsis w-24">{name}</p>
-		{#if score}
+		{#if showScore}
 			<p>Score: {score}</p>
 		{/if}
 	</div>

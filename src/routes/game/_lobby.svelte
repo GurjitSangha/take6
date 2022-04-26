@@ -3,13 +3,12 @@
 	import { getPlayerName, sendRequest } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import Profile from './_profile.svelte';
-	import { gameState } from './_store';
+	import { gameState, playersStore } from './_store';
 
-	export let players;
 	let shareUrl;
 
-	$: me = players?.[$gameState.playerId];
-	$: allAreReady = players && Object.values(players).every((v) => v.isReady);
+	$: me = $playersStore?.[$gameState.playerId];
+	$: allAreReady = $playersStore && Object.values($playersStore).every((v) => v.isReady);
 
 	onMount(() => {
 		console.log('lobby mounted');
@@ -63,14 +62,15 @@
 			</div>
 		{/if}
 
-		{#if players}
+		{#if $playersStore}
 			<h3>Players:</h3>
 			<div class="flex gap-2 flex-wrap justify-center">
-				{#each Object.entries(players) as [id, data]}
+				{#each Object.entries($playersStore) as [id, data]}
 					<Profile
-						name={getPlayerName(players, id)}
+						name={getPlayerName($playersStore, id)}
 						icon={data.isReady ? 'selected' : 'waiting'}
 						isPlayer={id === $gameState.playerId}
+						showScore={false}
 					/>
 				{/each}
 			</div>
