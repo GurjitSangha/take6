@@ -14,7 +14,6 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 		const scores = Object.values(snapReduce(scoresSnap)).filter(
 			(score) => score.value >= scoreLimit
 		);
-		console.log({ scores });
 		if (scores.length > 0) {
 			await updateDoc(doc(db, 'games', gameId), {
 				state: 'finished'

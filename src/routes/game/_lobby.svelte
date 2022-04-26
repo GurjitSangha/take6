@@ -9,7 +9,7 @@
 	let shareUrl;
 
 	$: me = players?.[$gameState.playerId];
-	$: allAreReady = Object.values(players).every((v) => v.isReady);
+	$: allAreReady = players && Object.values(players).every((v) => v.isReady);
 
 	onMount(() => {
 		console.log('lobby mounted');

@@ -18,7 +18,7 @@
 
 	let playerPick;
 
-	onMount(async () => {
+	onMount(() => {
 		console.log('board mounted');
 
 		selectedCardsUnsub = onSnapshot(
@@ -47,6 +47,7 @@
 	};
 
 	onDestroy(() => {
+		console.log('board destroyed');
 		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 

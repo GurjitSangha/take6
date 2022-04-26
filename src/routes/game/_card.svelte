@@ -10,12 +10,6 @@
 	$: dots = Array(score).fill(0);
 	$: isRed = score === 5 || score === 7;
 	$: isOrange = score === 2 || score === 3;
-
-	const colours = {
-		1: 'black',
-		3: 'black',
-		7: 'bob'
-	};
 </script>
 
 <button
@@ -23,9 +17,8 @@
 		if (onClick) onClick(value);
 	}}
 	data-value={value}
-	class="p-2 border border-gray-200 rounded bg-white hover:bg-gray-50 flex flex-col items-center"
+	class="p-2 border-4 border-gray-200 rounded bg-white hover:bg-gray-50 flex flex-col items-center"
 	class:border-green-400={selected}
-	class:border-4={selected}
 	in:fly={{ y: 10, duration: 500 }}
 >
 	<p

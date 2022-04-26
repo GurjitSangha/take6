@@ -3,6 +3,7 @@
 	import { getPlayerName, getPlayerScore, sendRequest, snapReduce } from '$lib/utils';
 	import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 	import Card from './_card.svelte';
 	import Profile from './_profile.svelte';
 	import Rows from './_rows.svelte';
@@ -107,6 +108,7 @@
 	});
 
 	onDestroy(() => {
+		console.log('placing destroyed');
 		if (selectedCardsUnsub) selectedCardsUnsub();
 	});
 </script>
@@ -128,7 +130,7 @@
 		<div class="flex">
 			{#each [...selectedCards] as [card, playerId]}
 				{#if card}
-					<div class="flex-1">
+					<div class="flex-1" transition:fly={{ y: -10, duration: 500 }}>
 						<div class="text-sm font-semibold">{getPlayerName(players, playerId)}</div>
 						<Card value={card} />
 					</div>

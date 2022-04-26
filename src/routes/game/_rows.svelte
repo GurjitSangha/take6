@@ -1,8 +1,6 @@
 <script>
 	import { getCardScore } from '$lib/utils';
 
-	import { onMount } from 'svelte';
-
 	import Card from './_card.svelte';
 	export let rows = [];
 	export let pickableRows = [];
@@ -27,9 +25,9 @@
 			{#if value !== 0}
 				<Card {value} />
 			{:else if idx == 5}
-				<div class="p-2 border border-red-500 rounded w-8 h-16 bg-transparent" />
+				<div class="p-2 border border-red-500 rounded w-14 h-16 bg-transparent" />
 			{:else}
-				<div class="p-2 border border-slate-500 rounded w-8 h-16 bg-transparent" />
+				<div class="p-2 border border-slate-500 rounded w-14 h-16 bg-transparent" />
 			{/if}
 		{/each}
 		({rowScores[idx]})
