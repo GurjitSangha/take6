@@ -50,7 +50,8 @@
 	const onPickRow = async (rowId, isAutoPick = true) => {
 		console.log(`I'm going to pick row ${rowId}`);
 		if (isAutoPick) {
-			await new Promise((r) => setTimeout(r, 1000));
+			// @ts-ignore
+			await new Promise((r) => setTimeout(r, parseInt(import.meta.env.VITE_PICK_WAIT_MS, 10)));
 		}
 		await sendRequest({
 			path: '/api/pickRow',

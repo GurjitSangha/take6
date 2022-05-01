@@ -23,7 +23,6 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 
 		const handSnap = await getDoc(doc(db, `games/${gameId}/hands/${Object.keys(players)[0]}`));
 		const hand = handSnap.data()?.value || [];
-		console.log(`hand for ${Object.keys(players)[0]}`, hand);
 		// If hand is empty, redeal
 		if (hand.length === 0) {
 			const { hands, rows } = redeal(players);
