@@ -124,11 +124,14 @@
 		</div>
 		<Rows {pickableRows} onRowClick={onPickRow} />
 
-		<div class="flex">
+		<div class="flex justify-evenly text-center">
 			{#each [...selectedCards] as [card, playerId]}
 				{#if card}
-					<div class="flex-1" transition:fly={{ y: -10, duration: 500 }}>
-						<div class="text-sm font-semibold">{getPlayerName($playersStore, playerId)}</div>
+					<div
+						class="flex flex-col align-center justify-center"
+						transition:fly={{ y: -10, duration: 500 }}
+					>
+						<div class="text-md font-semibold">{getPlayerName($playersStore, playerId)}</div>
 						<Card value={card} />
 					</div>
 				{/if}

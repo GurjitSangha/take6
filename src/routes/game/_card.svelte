@@ -8,8 +8,10 @@
 
 	$: score = getCardScore(value);
 	$: dots = Array(score).fill(0);
-	$: isRed = score === 5 || score === 7;
-	$: isOrange = score === 2 || score === 3;
+	$: isRed = score === 7;
+	$: isOrange = score === 5;
+	$: isGreen = score === 3;
+	$: isBlue = score === 2;
 </script>
 
 <button
@@ -25,6 +27,8 @@
 		class="font-bold text-black text-sm mb-2"
 		class:text-red-600={isRed}
 		class:text-orange-600={isOrange}
+		class:text-green-600={isGreen}
+		class:text-blue-600={isBlue}
 	>
 		{value}
 	</p>
@@ -34,6 +38,8 @@
 				class="bg-black w-2 h-2 rounded"
 				class:bg-red-600={isRed}
 				class:bg-orange-600={isOrange}
+				class:bg-green-600={isGreen}
+				class:bg-blue-600={isBlue}
 			/>
 		{/each}
 	</div>

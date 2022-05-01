@@ -20,24 +20,26 @@
 </script>
 
 {#each displayRows as row, idx}
-	<div class="flex flex-wrap items-center gap-4">
+	<div class="grid grid-cols-7 items-center gap-4">
 		{#each row as value, idx}
 			{#if value !== 0}
 				<Card {value} />
 			{:else if idx == 5}
-				<div class="p-2 border border-red-500 rounded w-14 h-16 bg-transparent" />
+				<div class="p-2 border border-red-500 rounded h-16 bg-transparent" />
 			{:else}
-				<div class="p-2 border border-slate-500 rounded w-14 h-16 bg-transparent" />
+				<div class="p-2 border border-slate-500 rounded h-16 bg-transparent" />
 			{/if}
 		{/each}
-		({rowScores[idx]})
-		{#if pickableRows.includes(idx)}
-			<div
-				on:click={() => onRowClick(idx, false)}
-				class="px-2 py-1 border border-green-500 cursor-pointer rounded"
-			>
-				Pick
-			</div>
-		{/if}
+		<div class="flex items-center gap-2">
+			{#if pickableRows.includes(idx)}
+				<div
+					on:click={() => onRowClick(idx, false)}
+					class="px-2 py-1 border border-green-500 cursor-pointer rounded"
+				>
+					Pick
+				</div>
+			{/if}
+			({rowScores[idx]})
+		</div>
 	</div>
 {/each}
