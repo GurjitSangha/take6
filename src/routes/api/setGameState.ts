@@ -2,6 +2,7 @@ import type { RequestHandlerOutput } from '@sveltejs/kit';
 import { firestore as db } from '$lib/firebase';
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { redeal, snapReduce } from '$lib/utils';
+import { logEvent } from './_logEvent';
 
 export async function post({ request }): Promise<RequestHandlerOutput> {
 	const { gameId, state, players = {} } = await request.json();
@@ -18,6 +19,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 			await updateDoc(doc(db, 'games', gameId), {
 				state: 'finished'
 			});
+			logEvent({ gameId, event: 'Game over!' });
 			return { status: 200 };
 		}
 
@@ -39,6 +41,8 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 			Object.keys(players).forEach(async (playerId) => {
 				await setDoc(doc(db, `games/${gameId}/hands/${playerId}`), { value: hands[playerId] });
 			});
+
+			logEvent({ gameId, event: 'Redealing cards!' });
 		}
 	}
 

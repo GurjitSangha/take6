@@ -59,6 +59,7 @@
 			data: {
 				gameId: $gameState.gameId,
 				playerId: $gameState.playerId,
+				playerName: getPlayerName($playersStore, $gameState.playerId),
 				rowId,
 				card: activeCard,
 				isAutoPick

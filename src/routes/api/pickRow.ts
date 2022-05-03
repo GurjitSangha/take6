@@ -2,9 +2,12 @@ import type { RequestHandlerOutput } from '@sveltejs/kit';
 import { firestore as db } from '$lib/firebase';
 import { arrayRemove, arrayUnion, doc, runTransaction, updateDoc } from 'firebase/firestore';
 import { getCardScore } from '$lib/utils';
+import { logEvent } from './_logEvent';
 
 export async function post({ request }): Promise<RequestHandlerOutput> {
-	const { gameId, playerId, rowId, card, isAutoPick } = await request.json();
+	const { gameId, playerId, playerName, rowId, card, isAutoPick } = await request.json();
+
+	let score;
 
 	try {
 		await runTransaction(db, async (transaction) => {
@@ -14,7 +17,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 
 			// if row length == 5 or it is not an auto pick, calculate score, clear and set card as first elem
 			if (row.length === 5 || !isAutoPick) {
-				const score = row.reduce((acc, cur) => acc + getCardScore(cur), 0);
+				score = row.reduce((acc, cur) => acc + getCardScore(cur), 0);
 				const playerDoc = await transaction.get(doc(db, `games/${gameId}/scores/${playerId}`));
 				const player = playerDoc.data();
 
@@ -40,7 +43,11 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 	await updateDoc(doc(db, `games/${gameId}/hands/${playerId}`), {
 		value: arrayRemove(parseInt(card, 10))
 	});
-	console.log(`${playerId} placed card ${card} in row ${rowId} ${gameId}`);
+	console.log(`${playerName} placed card ${card} in row ${rowId} ${gameId}`);
+	logEvent({ gameId, event: `${playerName} placed ${card} in row ${rowId}` });
+	if (score) {
+		logEvent({ gameId, event: `${playerName} scored ${score} points!` });
+	}
 
 	return {
 		status: 200

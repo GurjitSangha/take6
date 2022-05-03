@@ -2,6 +2,7 @@ import { firestore as db } from '$lib/firebase';
 import { redeal } from '$lib/utils';
 import type { RequestHandlerOutput } from '@sveltejs/kit';
 import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
+import { logEvent } from './_logEvent';
 
 export async function post({ request }): Promise<RequestHandlerOutput> {
 	const { gameId } = await request.json();
@@ -34,6 +35,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 		state: 'selecting'
 	});
 	console.log(`started game ${gameId}`);
+	logEvent({ gameId, event: 'Game started!' });
 
 	return {
 		status: 200

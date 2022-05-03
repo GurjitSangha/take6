@@ -70,17 +70,6 @@
 		});
 	});
 
-	beforeUpdate(() => {
-		autoscroll =
-			showEvents &&
-			eventsDiv &&
-			eventsDiv.offsetHeight + eventsDiv.scrollTop > eventsDiv.scrollHeight - 20;
-	});
-
-	afterUpdate(() => {
-		if (showEvents && autoscroll) eventsDiv.scrollTo(0, eventsDiv.scrollHeight);
-	});
-
 	onDestroy(() => {
 		if (unsub) unsub();
 		if (playersUnsub) playersUnsub();
@@ -112,8 +101,8 @@
 	</p>
 	{#if showEvents}
 		<div bind:this={eventsDiv} transition:slide class="w-full h-20 overflow-scroll self-start">
-			{#each events as event}
-				<p class="last:text-green-500">{event}</p>
+			{#each events.reverse() as event}
+				<p class="first:text-green-500">{event}</p>
 			{/each}
 		</div>
 	{/if}
