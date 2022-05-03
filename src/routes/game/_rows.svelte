@@ -20,14 +20,14 @@
 </script>
 
 {#each displayRows as row, idx}
-	<div class="grid grid-cols-7 items-center gap-4">
+	<div class="flex justify-center items-center gap-4">
 		{#each row as value, idx}
 			{#if value !== 0}
 				<Card {value} />
 			{:else if idx == 5}
-				<div class="p-2 border border-red-500 rounded h-16 bg-transparent" />
+				<div class="p-2 border border-red-500 rounded w-14 h-16 bg-transparent" />
 			{:else}
-				<div class="p-2 border border-slate-500 rounded h-16 bg-transparent" />
+				<div class="p-2 border border-slate-500 rounded w-14 h-16 bg-transparent" />
 			{/if}
 		{/each}
 		<div class="flex items-center gap-2">
