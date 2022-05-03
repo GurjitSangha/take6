@@ -111,32 +111,30 @@
 	});
 </script>
 
-<div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
-	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
-		<div class="flex gap-2 flex-wrap justify-center">
-			{#each Object.keys($playersStore) as id}
-				<Profile
-					name={getPlayerName($playersStore, id)}
-					score={getPlayerScore($scoresStore, id)}
-					icon={id === activePlayer ? 'waiting' : ''}
-					isPlayer={id === $gameState.playerId}
-				/>
-			{/each}
-		</div>
-		<Rows {pickableRows} onRowClick={onPickRow} />
+<div class="w-full space-y-8 text-gray-500 dark:text-white">
+	<div class="flex gap-2 flex-wrap justify-center">
+		{#each Object.keys($playersStore) as id}
+			<Profile
+				name={getPlayerName($playersStore, id)}
+				score={getPlayerScore($scoresStore, id)}
+				icon={id === activePlayer ? 'waiting' : ''}
+				isPlayer={id === $gameState.playerId}
+			/>
+		{/each}
+	</div>
+	<Rows {pickableRows} onRowClick={onPickRow} />
 
-		<div class="flex justify-evenly text-center">
-			{#each [...selectedCards] as [card, playerId]}
-				{#if card}
-					<div
-						class="flex flex-col align-center justify-center"
-						transition:fly={{ y: -10, duration: 500 }}
-					>
-						<div class="text-md font-semibold">{getPlayerName($playersStore, playerId)}</div>
-						<Card value={card} />
-					</div>
-				{/if}
-			{/each}
-		</div>
+	<div class="flex justify-evenly text-center">
+		{#each [...selectedCards] as [card, playerId]}
+			{#if card}
+				<div
+					class="flex flex-col align-center justify-center"
+					transition:fly={{ y: -10, duration: 500 }}
+				>
+					<div class="text-md font-semibold">{getPlayerName($playersStore, playerId)}</div>
+					<Card value={card} />
+				</div>
+			{/if}
+		{/each}
 	</div>
 </div>

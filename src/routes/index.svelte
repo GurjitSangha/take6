@@ -1,11 +1,9 @@
 <script>
 	import { goto } from '$app/navigation';
-
 	import { randId, sendRequest } from '$lib/utils';
 
 	let playerId = randId(5);
 	let playerName;
-	let result = 'res goes here';
 
 	async function handleClick() {
 		const res = await sendRequest({
@@ -20,8 +18,6 @@
 		});
 
 		const json = await res.json();
-		result = JSON.stringify(json);
-
 		localStorage.setItem('playerId', playerId);
 
 		goto(`/game/${json.gameId}`);

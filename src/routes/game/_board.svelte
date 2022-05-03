@@ -22,7 +22,7 @@
 			(snap) => {
 				selectedCards = snapReduce(snap);
 				playerPick = selectedCards?.[$gameState.playerId]?.value;
-				console.log('selectedCardsSnap', { selectedCards });
+				console.log('selectedCardsSnap', { diff: snap.docChanges(), selectedCards });
 				checkAllPlayersSelected();
 			}
 		);
@@ -60,29 +60,27 @@
 	};
 </script>
 
-<div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
-	<div class="max-w-xl w-full space-y-8 text-gray-500 dark:text-white">
-		{#if $playersStore}
-			<div class="flex gap-2 flex-wrap justify-center">
-				{#each Object.entries($playersStore) as [id, _]}
-					<Profile
-						name={getPlayerName($playersStore, id)}
-						score={getPlayerScore($scoresStore, id)}
-						icon={selectedCards?.[id]?.value ? 'selected' : 'waiting'}
-						isPlayer={id === $gameState.playerId}
-					/>
-				{/each}
-			</div>
-		{/if}
-
-		<Rows />
-	</div>
-	<div class="mt-8 flex flex-col items-center">
-		Select a card
-		<div class="mt-4 gap-1 flex flex-wrap mx-auto" transition:fly={{ y: 10, duration: 500 }}>
-			{#each $handStore as value}
-				<Card {value} onClick={handleCardClick} selected={playerPick === value} />
+<div class="w-full space-y-8 text-gray-500 dark:text-white">
+	{#if $playersStore}
+		<div class="flex gap-2 flex-wrap justify-center">
+			{#each Object.entries($playersStore) as [id, _]}
+				<Profile
+					name={getPlayerName($playersStore, id)}
+					score={getPlayerScore($scoresStore, id)}
+					icon={selectedCards?.[id]?.value ? 'selected' : 'waiting'}
+					isPlayer={id === $gameState.playerId}
+				/>
 			{/each}
 		</div>
+	{/if}
+
+	<Rows />
+</div>
+<div class="mt-8 flex flex-col items-center">
+	Select a card
+	<div class="mt-4 gap-1 flex flex-wrap mx-auto" transition:fly={{ y: 10, duration: 500 }}>
+		{#each $handStore as value}
+			<Card {value} onClick={handleCardClick} selected={playerPick === value} />
+		{/each}
 	</div>
 </div>
