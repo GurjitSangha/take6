@@ -44,7 +44,7 @@ export async function post({ request }): Promise<RequestHandlerOutput> {
 		value: arrayRemove(parseInt(card, 10))
 	});
 	console.log(`${playerName} placed card ${card} in row ${rowId} ${gameId}`);
-	logEvent({ gameId, event: `${playerName} placed ${card} in row ${rowId + 1}` });
+	logEvent({ gameId, event: `${playerName} placed ${card} in row ${parseInt(rowId, 10) + 1}` });
 	if (score) {
 		logEvent({ gameId, event: `${playerName} scored ${score} points!` });
 	}

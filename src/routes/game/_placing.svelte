@@ -74,7 +74,7 @@
 		console.log('placing mounted');
 		selectedCardsUnsub = onSnapshot(
 			collection(db, `games/${$gameState.gameId}/selectedCards`),
-			(snap) => {
+			async (snap) => {
 				const cards = snapReduce(snap);
 				// Sort by card value with a Map
 				const tempMap = new Map();
@@ -87,8 +87,10 @@
 				selectedCards = tempMap;
 				console.log('selectedCardsSnap', { selectedCards });
 
-				// If all cards have been placed, set game state to 'selecting'
+				// If all cards have been placed, set game state to 'selecting' after waiting
 				if (selectedCards.size === 0) {
+					// @ts-ignore
+					await new Promise((r) => setTimeout(r, parseInt(import.meta.env.VITE_PICK_WAIT_MS, 10)));
 					sendRequest({
 						path: '/api/setGameState',
 						method: 'POST',
