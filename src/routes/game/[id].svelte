@@ -3,12 +3,12 @@
 	import { firestore as db } from '$lib/firebase';
 	import { snapReduce } from '$lib/utils';
 	import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
-	import { afterUpdate, beforeUpdate, onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import Board from './_board.svelte';
 	import Endgame from './_endgame.svelte';
 	import Lobby from './_lobby.svelte';
 	import Placing from './_placing.svelte';
+	import Selecting from './_Selecting.svelte';
 	import { gameState, handStore, playersStore, rowsStore, scoresStore } from './_store';
 
 	let unsub;
@@ -21,8 +21,6 @@
 	let playerId;
 	$: gameId = $page.params.id;
 	let events = [];
-	let autoscroll;
-	let eventsDiv;
 	let showEvents = false;
 
 	onMount(async () => {
@@ -82,7 +80,7 @@
 	const views = {
 		lobby: Lobby,
 		placing: Placing,
-		selecting: Board,
+		selecting: Selecting,
 		finished: Endgame
 	};
 
@@ -100,7 +98,7 @@
 		Toggle Event Log
 	</p>
 	{#if showEvents}
-		<div bind:this={eventsDiv} transition:slide class="w-full h-20 overflow-scroll self-start">
+		<div transition:slide class="w-full h-20 overflow-scroll self-start">
 			{#each events.reverse() as event}
 				<p class="first:text-green-500">{event}</p>
 			{/each}

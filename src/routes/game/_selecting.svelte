@@ -15,7 +15,7 @@
 	let playerPick;
 
 	onMount(() => {
-		console.log('board mounted');
+		console.log('selecting mounted');
 
 		selectedCardsUnsub = onSnapshot(
 			collection(db, `games/${$gameState.gameId}/selectedCards`),
