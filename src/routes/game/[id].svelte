@@ -8,7 +8,8 @@
 	import Endgame from './_endgame.svelte';
 	import Lobby from './_lobby.svelte';
 	import Placing from './_placing.svelte';
-	import Selecting from './_Selecting.svelte';
+	import Selecting from './_selecting.svelte';
+	import Ingame from './_ingame.svelte';
 	import { gameState, handStore, playersStore, rowsStore, scoresStore } from './_store';
 
 	let unsub;
@@ -88,8 +89,12 @@
 </script>
 
 <div class="min-h-full max-w-2xl mx-auto flex flex-col items-center justify-center py-12 px-4">
-	{#if activeView}
-		<svelte:component this={activeView} />
+	{#if $gameState.state == 'lobby'}
+		<Lobby />
+	{:else if $gameState.state == 'finished'}
+		<Endgame />
+	{:else}
+		<Ingame />
 	{/if}
 	<p
 		on:click={() => (showEvents = !showEvents)}

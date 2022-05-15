@@ -31,3 +31,10 @@ export const scoresStore = writable({});
 
 export const dbHand = writable([]);
 export const dbSelectedCards = writable({} as DbSelectedCards);
+
+export const pickableRows = writable([]);
+
+export const selectedCardsMap = writable(new Map());
+
+export const activeCard = writable(0);
+export const activePlayer = writable('');

@@ -1,9 +1,8 @@
 <script>
 	import { getCardScore } from '$lib/utils';
 	import Card from './_card.svelte';
-	import { rowsStore } from './_store';
+	import { pickableRows, rowsStore } from './_store';
 
-	export let pickableRows = [];
 	export let onRowClick = (idx, isAutoPick) => null;
 
 	let rowScores = [];
@@ -31,7 +30,7 @@
 			{/if}
 		{/each}
 		<div class="flex items-center gap-2">
-			{#if pickableRows.includes(idx)}
+			{#if $pickableRows.includes(idx)}
 				<div
 					on:click={() => onRowClick(idx, false)}
 					class="px-2 py-1 border border-green-500 cursor-pointer rounded"
