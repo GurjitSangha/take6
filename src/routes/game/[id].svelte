@@ -7,8 +7,6 @@
 	import { slide } from 'svelte/transition';
 	import Endgame from './_endgame.svelte';
 	import Lobby from './_lobby.svelte';
-	import Placing from './_placing.svelte';
-	import Selecting from './_selecting.svelte';
 	import Ingame from './_ingame.svelte';
 	import { gameState, handStore, playersStore, rowsStore, scoresStore } from './_store';
 
@@ -77,15 +75,6 @@
 		if (scoresUnsub) scoresUnsub();
 		if (eventsUnsub) eventsUnsub();
 	});
-
-	const views = {
-		lobby: Lobby,
-		placing: Placing,
-		selecting: Selecting,
-		finished: Endgame
-	};
-
-	$: activeView = views[$gameState.state] || '';
 </script>
 
 <div class="min-h-full max-w-2xl mx-auto flex flex-col items-center justify-center py-12 px-4">
