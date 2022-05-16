@@ -1,11 +1,14 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { randId, sendRequest } from '$lib/utils';
+	import Loading from './game/_loading.svelte';
 
 	let playerId = randId(5);
+	let isSubmitting = false;
 	let playerName;
 
 	async function handleClick() {
+		isSubmitting = true;
 		const res = await sendRequest({
 			path: '/api/createGame',
 			method: 'POST',
@@ -44,9 +47,15 @@
 			<div>
 				<button
 					on:click|preventDefault={handleClick}
-					class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-					type="submit">Create Game</button
+					class="py-2 px-4 h-10 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+					type="submit"
 				>
+					{#if isSubmitting}
+						<Loading />
+					{:else}
+						Create Game
+					{/if}
+				</button>
 			</div>
 		</form>
 	</div>

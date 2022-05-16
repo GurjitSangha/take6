@@ -1,6 +1,7 @@
 <script>
 	import { getPlayerName, getPlayerScore, sendRequest } from '$lib/utils';
 	import Hand from './_hand.svelte';
+	import Loading from './_loading.svelte';
 	import Profile from './_profile.svelte';
 	import Rows from './_rows.svelte';
 	import Selected from './_selected.svelte';
@@ -46,9 +47,13 @@
 
 	<Rows onRowClick={onPickRow} />
 
-	{#if $gameState.state === 'selecting'}
-		<Hand />
-	{:else if $gameState.state === 'placing'}
-		<Selected {onPickRow} />
-	{/if}
+	<div class="flex justify-center items-center w-full">
+		{#if $gameState.state === 'selecting'}
+			<Hand />
+		{:else if $gameState.state === 'placing'}
+			<Selected {onPickRow} />
+		{:else}
+			<Loading />
+		{/if}
+	</div>
 </div>

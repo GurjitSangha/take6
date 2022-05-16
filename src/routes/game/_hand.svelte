@@ -62,7 +62,7 @@
 	};
 </script>
 
-<div class="mt-8 flex flex-col items-center">
+<div class="flex flex-col items-center">
 	Select a card
 	<div class="mt-4 gap-1 flex flex-wrap mx-auto" transition:fly={{ y: 10, duration: 500 }}>
 		{#each $handStore as value}

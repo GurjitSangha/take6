@@ -94,7 +94,7 @@
 	});
 </script>
 
-<div class="flex justify-evenly text-center">
+<div class="flex w-full justify-evenly text-center">
 	{#each [...$selectedCardsMap] as [card, playerId]}
 		{#if card}
 			<div

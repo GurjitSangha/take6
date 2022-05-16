@@ -2,10 +2,13 @@
 	import { goto } from '$app/navigation';
 	import { getPlayerName, sendRequest } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import Loading from './_loading.svelte';
 	import Profile from './_profile.svelte';
 	import { gameState, playersStore } from './_store';
 
 	let shareUrl;
+	let submittingReady = false;
+	let submittingStart = false;
 
 	$: me = $playersStore?.[$gameState.playerId];
 	$: allAreReady = $playersStore && Object.values($playersStore).every((v) => v.isReady);
@@ -16,7 +19,8 @@
 	});
 
 	const toggleReady = async () => {
-		sendRequest({
+		submittingReady = true;
+		await sendRequest({
 			path: '/api/setReady',
 			method: 'POST',
 			data: {
@@ -25,6 +29,7 @@
 				playerName: getPlayerName($playersStore, $gameState.playerId)
 			}
 		});
+		submittingReady = false;
 	};
 
 	const leaveGame = async () => {
@@ -42,13 +47,15 @@
 	};
 
 	const startGame = async () => {
-		sendRequest({
+		submittingStart = true;
+		await sendRequest({
 			path: '/api/startGame',
 			method: 'POST',
 			data: {
 				gameId: $gameState.gameId
 			}
 		});
+		submittingStart = false;
 	};
 </script>
 
@@ -79,23 +86,31 @@
 
 	<button
 		on:click|preventDefault={toggleReady}
-		class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+		class="py-2 px-4 h-10 w-full border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
 		type="submit"
 	>
-		{me?.isReady ? "I'm Not Ready" : "I'm Ready"}
+		{#if submittingReady}
+			<Loading />
+		{:else}
+			{me?.isReady ? "I'm Not Ready" : "I'm Ready"}
+		{/if}
 	</button>
 	{#if me?.isHost && allAreReady}
 		<button
 			on:click|preventDefault={startGame}
-			class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+			class="py-2 px-4 h-10 w-full border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
 			type="submit"
 		>
-			Start Game
+			{#if submittingStart}
+				<Loading />
+			{:else}
+				Start Game
+			{/if}
 		</button>
 	{/if}
 	<button
 		on:click|preventDefault={leaveGame}
-		class="py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+		class="py-2 px-4 h-10 w-full border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
 		type="submit"
 	>
 		Leave Game

@@ -87,7 +87,7 @@
 	{/if}
 	<p
 		on:click={() => (showEvents = !showEvents)}
-		class="px-4 py-2 border border-blue-500 rounded my-4"
+		class="px-4 py-2 border border-blue-500 rounded my-4 cursor-pointer"
 	>
 		Toggle Event Log
 	</p>
