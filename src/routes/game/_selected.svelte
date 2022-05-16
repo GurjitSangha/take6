@@ -98,7 +98,7 @@
 	{#each [...$selectedCardsMap] as [card, playerId]}
 		{#if card}
 			<div
-				class="flex flex-col align-center justify-center"
+				class="flex flex-col items-center justify-center"
 				transition:fly={{ y: -10, duration: 500 }}
 			>
 				<div class="text-md font-semibold">{getPlayerName($playersStore, playerId)}</div>

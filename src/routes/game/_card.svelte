@@ -19,7 +19,7 @@
 		if (onClick) onClick(value);
 	}}
 	data-value={value}
-	class="p-2 border-4 border-gray-200 max-w-14 rounded bg-white hover:bg-gray-50 flex flex-col items-center"
+	class="p-2 border-4 border-gray-200 max-w-14 w-max rounded bg-white hover:bg-gray-50 flex flex-col items-center"
 	class:border-green-400={selected}
 	in:fly={{ y: 10, duration: 500 }}
 >
